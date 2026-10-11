@@ -1,0 +1,64 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<div class="container-fluid mt-4">
+    <h1 class="mb-4">Podsumowanie wydatków klasy</h1>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-nowrap">Uczeń</th> @foreach (var wydatek in Model.Podsumowanie.Wydatki) {
+                    <th class="text-end text-nowrap"> @wydatek.Nazwa </th>
+                                        }
+                    <th class="text-end text-nowrap">Nie zapłacone</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var uczen in Model.Podsumowanie.Uczniowie)
+                {
+                    <tr>
+                        <td class="text-nowrap">  @uczen.Nazwisko </td>
+                        @foreach (var komorka in uczen.Wydatki)
+                        {
+                            <td class="text-end text-nowrap
+            @(komorka.Kwota.HasValue
+                                        ? (!komorka.CzyZaplacono
+                                            ? "text-danger fw-bold"
+                                            : "table-success")
+                                        : "table-warning")">
+
+                        @if (komorka.Kwota.HasValue)
+                                {
+                                    @komorka.Kwota.Value.ToString("N2")
+                                }
+                                else
+                                {
+                                    <span class="text-muted">..</span>
+                                }
+
+                            </td>
+                        }
+                        <td class="text-end text-nowrap @(uczen.SumaNiezaplacona > 0 ? " text-danger fw-bold" : "")"> @uczen.SumaNiezaplacona.ToString("N2") zł </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr class="table-light fw-bold">
+                    <td>Razem</td> @foreach (var wydatek in Model.Podsumowanie.Wydatki) {
+                    <td class="text-end text-nowrap"> @wydatek.Suma.ToString("N2") zł </td>
+                                        }
+                    <td class="text-end text-nowrap"> @Model.Podsumowanie.SumaWszystkichZaleglosci.ToString("N2") zł </td>
+                </tr>
+                <tr class="table-warning fw-bold">
+                    <td>Nie zapłacone</td> @foreach (var wydatek in Model.Podsumowanie.Wydatki) {
+                    <td class="text-end text-nowrap text-danger"> @wydatek.SumaNiezaplacona.ToString("N2") zł </td>
+                                        }
+                    <td class="text-end text-nowrap text-danger"> @Model.Podsumowanie.SumaWszystkichZaleglosci.ToString("N2") zł </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="text-muted small mt-2"> <span class="text-danger fw-bold">Czerwony kolor</span> oznacza niezapłacony wydatek. „Brak” oznacza, że wydatek nie dotyczy ucznia. </div>
+</div>
