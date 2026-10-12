@@ -7,7 +7,7 @@ function setValue(id, value) {
     $("#" + id).text(value);
 }
 
-window.load = function () {
+load = function () {
     window.location.reload();
 };
 
@@ -16,31 +16,26 @@ window.load = function () {
 // =====================================
 
 let confirmCallback = null;
-
-window.showGlobalConfirmModal = function (callback, customMessage = null) {
+function showGlobalConfirmModal(callback, customMessage = null) {
     const modalElement = document.getElementById("globalConfirmModal");
-
     if (!modalElement) {
         console.error("Nie znaleziono modala globalConfirmModal.");
         return;
-    }
-
-    if (typeof callback !== "function") {
+    } if (typeof callback !== "function") {
         console.error("Callback musi być funkcją.");
         return;
     }
-
+    confirmCallback = callback;
     const messageElement = modalElement.querySelector(".confirm-modal-message");
-
     if (messageElement) {
-        messageElement.textContent =
-            customMessage ?? "Czy na pewno chcesz wykonać tę akcję?";
+        messageElement.textContent = customMessage ?? "Czy na pewno chcesz wykonać tę akcję?";
     }
-
-    window.confirmCallback = callback;
-
+    if (typeof bootstrap === "undefined" || !bootstrap.Modal) {
+        console.error("Bootstrap Modal nie jest załadowany.");
+        confirmCallback = null; return;
+    }
     bootstrap.Modal.getOrCreateInstance(modalElement).show();
-};
+}
 
 // Jeden handler — callback wykona się tylko raz.
 $(document).on("click", "#confirmModalOkBtn", function () {
@@ -148,4 +143,4 @@ postdata = function (n, t, i, r, u) {
         data: JSON.stringify(t)
     });
 };
-```;
+

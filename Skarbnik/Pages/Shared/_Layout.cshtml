@@ -38,6 +38,60 @@
             @RenderBody()
         </main>
     </div>
+   
+    <div class="modal fade confirm-modal"
+         id="globalConfirmModal"
+         tabindex="-1"
+         aria-labelledby="globalConfirmModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header border-0 pb-0">
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Zamknij">
+                    </button>
+                </div>
+
+                <div class="modal-body text-center pt-0 px-4 pb-4">
+
+                    <div class="confirm-modal-icon">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+
+                    <h5 class="confirm-modal-title"
+                        id="globalConfirmModalLabel">
+                        Potwierdzenie
+                    </h5>
+
+                    <p class="confirm-modal-message mb-0">
+                        Czy na pewno chcesz wykonać tę akcję?
+                    </p>
+
+                </div>
+
+                <div class="modal-footer border-0 pt-0 px-4 pb-4">
+                    <button type="button"
+                            class="btn btn-confirm-cancel"
+                            data-bs-dismiss="modal">
+                        Anuluj
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-confirm-ok"
+                            id="confirmModalOkBtn">
+                        <i class="bi bi-check-lg me-1"></i>
+                        Potwierdź
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+ 
 
     <footer class="border-top footer text-muted">
         <div class="container">

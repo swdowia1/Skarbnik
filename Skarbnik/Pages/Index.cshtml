@@ -2,6 +2,7 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+
 }
 <div class="container-fluid mt-4">
     <button class="btn btn-danger" onclick="testDelete()"> Test usuwania ucznia </button>
@@ -65,6 +66,10 @@
 </div>
 <script>
     function testDelete() {
-      window.load();
+      const studentId = 123;
+
+    showGlobalConfirmModal(function () {
+        console.log("Usuwanie ucznia o ID:", studentId);
+    }, "Czy na pewno chcesz usunąć tego ucznia?");
     }
 </script>
