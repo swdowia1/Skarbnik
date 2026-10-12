@@ -107,7 +107,9 @@ namespace Skarbnik.Pages
                     {
                         wiersz.Wydatki.Add(new KomorkaWydatkuVM
                         {
-                            Kwota = null
+                            Kwota = null,
+                            UczenId = uczen.Id,
+                            WydatekId = wydatek.Id
                         });
                     }
                 }

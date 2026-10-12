@@ -1,0 +1,87 @@
+﻿@page
+@model Skarbnik.Pages.PrzypiszModel
+@{
+}
+<div class="container mt-4" style="max-width: 650px">
+
+    <h1 class="mb-4">Dodaj płatność uczniowi</h1>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="mb-4">
+                <div class="text-muted small">Uczeń</div>
+                <h4>
+                    @Model.Uczen.Nazwisko
+                </h4>
+            </div>
+
+            <hr />
+
+            <div class="mb-3">
+                <div class="text-muted small">Wydatek</div>
+                <h5>@Model.Wydatek.Nazwa</h5>
+            </div>
+
+            <div class="mb-4">
+                <div class="text-muted small">Kwota do zapłaty</div>
+                <h3 class="text-primary">
+                    @Model.Wydatek.Kwota.ToString("N2") zł
+                </h3>
+            </div>
+
+            <div class="alert alert-info">
+                Wybierz, czy płatność została już dokonana.
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+
+                <form method="post">
+                    <input type="hidden"
+                           name="uczenId"
+                           value="@Model.Uczen.Id" />
+
+                    <input type="hidden"
+                           name="wydatekId"
+                           value="@Model.Wydatek.Id" />
+
+                    <input type="hidden"
+                           name="czyZaplacono"
+                           value="false" />
+
+                    <button type="submit"
+                            class="btn btn-warning">
+                        <icon name="clock" size="sm" />
+                        Dodaj płatność
+                    </button>
+                </form>
+
+                <form method="post">
+                    <input type="hidden"
+                           name="uczenId"
+                           value="@Model.Uczen.Id" />
+
+                    <input type="hidden"
+                           name="wydatekId"
+                           value="@Model.Wydatek.Id" />
+
+                    <input type="hidden"
+                           name="czyZaplacono"
+                           value="true" />
+
+                    <button type="submit"
+                            class="btn btn-success">
+                        <icon name="check-circle" size="sm" />
+                        Dodaj płatność jako opłaconą
+                    </button>
+                </form>
+
+                <a asp-page="/Podsumowanie/Index"
+                   class="btn btn-outline-secondary">
+                    Anuluj
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>

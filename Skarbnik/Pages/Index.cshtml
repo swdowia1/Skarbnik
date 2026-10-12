@@ -41,7 +41,15 @@
                                 }
                                 else
                                 {
-                                    <span class="text-muted">Brak</span>
+                                    <a asp-page="/Przypisz"
+                                       asp-route-uczenId="@komorka.UczenId"
+                                       asp-route-wydatekId="@komorka.WydatekId"
+                                       class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center"
+                                       style="width: 30px; height: 30px; font-size: 20px; line-height: 1; padding: 0;"
+                                       title="Dodaj płatność"
+                                       aria-label="Dodaj płatność">
+                                        +
+                                    </a>
                                 }
 
                             </td>
