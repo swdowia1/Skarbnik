@@ -13,7 +13,52 @@ namespace Skarbnik.Pages
         {
             _context = context;
         }
+        public async Task<IActionResult> OnPostZaplaconoAsync(int id)
+        {
+            var przypisanie = await _context.UczenWydatki
+                .FirstOrDefaultAsync(uw => uw.Id == id);
 
+            if (przypisanie == null)
+                return NotFound();
+
+            przypisanie.CzyZaplacono = true;
+            przypisanie.DataZaplaty = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage(new { id });
+        }
+
+        public async Task<IActionResult> OnPostNiezaplaconeAsync(int id)
+        {
+            var przypisanie = await _context.UczenWydatki
+                .FirstOrDefaultAsync(uw => uw.Id == id);
+
+            if (przypisanie == null)
+                return NotFound();
+
+            przypisanie.CzyZaplacono = false;
+            przypisanie.DataZaplaty = null;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage(new { id });
+        }
+
+        public async Task<IActionResult> OnPostUsunAsync(int id)
+        {
+            var przypisanie = await _context.UczenWydatki
+                .FirstOrDefaultAsync(uw => uw.Id == id);
+
+            if (przypisanie == null)
+                return NotFound();
+
+            _context.UczenWydatki.Remove(przypisanie);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage("/Index");
+        }
         public async Task<IActionResult> OnGetAsync(int id)
         {
             var przypisanie = await _context.UczenWydatki

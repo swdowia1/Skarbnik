@@ -41,7 +41,7 @@
                                 }
                                 else
                                 {
-                                    <a asp-page="/Przypisz"
+                                   @*  <a asp-page="/Przypisz"
                                        asp-route-uczenId="@komorka.UczenId"
                                        asp-route-wydatekId="@komorka.WydatekId"
                                        class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center"
@@ -49,6 +49,12 @@
                                        title="Dodaj płatność"
                                        aria-label="Dodaj płatność">
                                         +
+                                    </a> *@
+                                    <a asp-page="/Przypisz"
+                                       asp-route-uczenId="@komorka.UczenId"
+                                       asp-route-wydatekId="@komorka.WydatekId"
+                                       class="btn btn-sm btn-outline-primary rounded-circle">
+                                        <i class="bi bi-plus-lg"></i>
                                     </a>
                                 }
 
