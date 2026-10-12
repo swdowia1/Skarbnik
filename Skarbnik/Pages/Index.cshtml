@@ -4,6 +4,7 @@
     ViewData["Title"] = "Home page";
 }
 <div class="container-fluid mt-4">
+    <button class="btn btn-danger" onclick="testDelete()"> Test usuwania ucznia </button>
     <h1 class="mb-4">Podsumowanie wydatków klasy</h1>
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle">
@@ -23,11 +24,11 @@
                         @foreach (var komorka in uczen.Wydatki)
                         {
                             <td class="text-end text-nowrap
-            @(komorka.Kwota.HasValue
-                                        ? (!komorka.CzyZaplacono
-                                            ? "text-danger fw-bold"
-                                            : "table-success")
-                                        : "table-warning")">
+                    @(komorka.Kwota.HasValue
+                                                                        ? (!komorka.CzyZaplacono
+                                                                            ? "text-danger fw-bold"
+                                                                            : "table-success")
+                                                                        : "table-warning")">
 
                         @if (komorka.Kwota.HasValue)
                                 {
@@ -62,3 +63,8 @@
     </div>
     <div class="text-muted small mt-2"> <span class="text-danger fw-bold">Czerwony kolor</span> oznacza niezapłacony wydatek. „Brak” oznacza, że wydatek nie dotyczy ucznia. </div>
 </div>
+<script>
+    function testDelete() {
+      window.load();
+    }
+</script>
