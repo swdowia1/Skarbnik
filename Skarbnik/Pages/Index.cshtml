@@ -33,11 +33,15 @@
 
                         @if (komorka.Kwota.HasValue)
                                 {
-                                    @komorka.Kwota.Value.ToString("N2")
+                                    <a asp-page="/Szczegoly"
+                                       asp-route-id="@komorka.Id"
+                                       class="text-reset text-decoration-none">
+                                        @komorka.Kwota.Value.ToString("N2")
+                                    </a>
                                 }
                                 else
                                 {
-                                    <span class="text-muted">.. </span>
+                                    <span class="text-muted">Brak</span>
                                 }
 
                             </td>

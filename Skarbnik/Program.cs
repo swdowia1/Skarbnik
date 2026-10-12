@@ -27,5 +27,6 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapControllers(); // <<< to dodaj
 
 app.Run();

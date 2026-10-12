@@ -2,6 +2,7 @@
 {
     public class KomorkaWydatkuVM
     {
+        public int Id { get; set; }
         public decimal? Kwota { get; set; }
         public bool CzyZaplacono { get; set; }
     }

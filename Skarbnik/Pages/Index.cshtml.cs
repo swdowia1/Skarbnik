@@ -45,6 +45,7 @@ namespace Skarbnik.Pages
                 .AsNoTracking()
                 .Select(uw => new
                 {
+                    id=uw.Id,
                     uw.UczenId,
                     uw.WydatekId,
                     uw.CzyZaplacono,
@@ -91,6 +92,7 @@ namespace Skarbnik.Pages
                     {
                         wiersz.Wydatki.Add(new KomorkaWydatkuVM
                         {
+                            Id = przypisanie.id,
                             Kwota = przypisanie.Kwota,
                             CzyZaplacono = przypisanie.CzyZaplacono
                         });

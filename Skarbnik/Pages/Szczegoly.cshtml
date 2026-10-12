@@ -1,0 +1,96 @@
+﻿@page "{id:int}"
+@model Skarbnik.Pages.SzczegolyModel
+
+
+
+@{
+    ViewData["Title"] = "Szczegóły wydatku";
+
+    var przypisanie = Model.Przypisanie;
+}
+
+<div class="container mt-4" style="max-width: 700px">
+
+    <h1 class="mb-4">Szczegóły wydatku</h1>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <dl class="row">
+                <dt class="col-sm-4">Uczeń</dt>
+                <dd class="col-sm-8">
+                         @przypisanie.Uczen.Nazwisko
+                </dd>
+
+                <dt class="col-sm-4">Wydatek</dt>
+                <dd class="col-sm-8">
+                    @przypisanie.Wydatek.Nazwa
+                </dd>
+
+                <dt class="col-sm-4">Kwota</dt>
+                <dd class="col-sm-8 fw-bold">
+                    @przypisanie.Wydatek.Kwota.ToString("N2") zł
+                </dd>
+
+                <dt class="col-sm-4">Status</dt>
+                <dd class="col-sm-8">
+                    @if (przypisanie.CzyZaplacono)
+                    {
+                        <span class="badge bg-success">Zapłacono</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Nie zapłacono</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-4">Data zapłaty</dt>
+                <dd class="col-sm-8">
+                    @(przypisanie.DataZaplaty?.ToLocalTime()
+                        .ToString("dd.MM.yyyy HH:mm") ?? "Brak")
+                </dd>
+            </dl>
+
+            <hr />
+
+            <div class="d-flex flex-wrap gap-2">
+
+                @if (!przypisanie.CzyZaplacono)
+                {
+                    <form method="post"
+                          asp-page-handler="Zaplacono"
+                          asp-route-id="@przypisanie.Id">
+                        <button type="submit" class="btn btn-success">
+                            Oznacz jako zapłacone
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <form method="post"
+                          asp-page-handler="Niezaplacone"
+                          asp-route-id="@przypisanie.Id">
+                        <button type="submit" class="btn btn-warning">
+                            Ustaw jako niezapłacone
+                        </button>
+                    </form>
+                }
+
+                <form method="post"
+                      asp-page-handler="Usun"
+                      asp-route-id="@przypisanie.Id"
+                      onsubmit="return confirm('Czy na pewno usunąć przypisanie tego wydatku do ucznia?');">
+                    <button type="submit" class="btn btn-outline-danger">
+                        Usuń przypisanie
+                    </button>
+                </form>
+
+                <a asp-page="/Index"
+                   class="btn btn-outline-secondary">
+                    Powrót do podsumowania
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
