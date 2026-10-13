@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Skarbnik.DB;
+using Skarbnik.Enums;
 using Skarbnik.VM;
 
 namespace Skarbnik.Pages
@@ -49,14 +50,11 @@ namespace Skarbnik.Pages
         UczenId = u.Id,
          Nazwisko= u.Nazwisko,
 
-        PrzypisanieId = przypisanie == null
-            ? (int?)null
-            : przypisanie.Id,
-
-        CzyPrzydzielono = przypisanie != null,
-
-        CzyZaplacono = przypisanie != null
-            && przypisanie.CzyZaplacono,
+         StanPlatnosc = przypisanie == null
+            ? StanPlatnosc.Brak
+            : przypisanie.CzyZaplacono
+                ? StanPlatnosc.Zaplacono
+                : StanPlatnosc.DoZaplaty,
 
         DataZaplaty = przypisanie == null
             ? (DateTime?)null

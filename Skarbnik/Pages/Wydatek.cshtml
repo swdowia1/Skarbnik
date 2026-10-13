@@ -1,18 +1,12 @@
 ﻿@page "{id:int}"
+@using Skarbnik.Enums
 
 @model Skarbnik.Pages.WydatekModel
 
 @{
     ViewData["Title"] = "Szczegóły wydatku";
 
-    var zaplacono = Model.Uczniowie.Count(u =>
-    u.CzyPrzydzielono && u.CzyZaplacono);
-
-    var niezaplacono = Model.Uczniowie.Count(u =>
-    u.CzyPrzydzielono && !u.CzyZaplacono);
-
-    var nieprzydzielono = Model.Uczniowie.Count(u =>
-    !u.CzyPrzydzielono);
+   
 }
 
 <div class="container-fluid py-4">
@@ -35,63 +29,14 @@
             </div>
         </div>
 
-        <a asp-page="/Podsumowanie/Index"
+        <a asp-page="/Index"
            class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i>
             Powrót do podsumowania
         </a>
     </div>
 
-    <!-- Karty podsumowania -->
-    <div class="row g-3 mb-4">
-
-        <div class="col-12 col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="rounded-3 bg-success bg-opacity-10 text-success p-3">
-                        <i class="bi bi-check-circle fs-3"></i>
-                    </div>
-                    <div>
-                        <div class="text-muted small">Zapłacono</div>
-                        <div class="fs-3 fw-bold text-success">@zaplacono</div>
-                        <div class="small text-muted">uczniów</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="rounded-3 bg-danger bg-opacity-10 text-danger p-3">
-                        <i class="bi bi-clock-history fs-3"></i>
-                    </div>
-                    <div>
-                        <div class="text-muted small">Nie zapłacono</div>
-                        <div class="fs-3 fw-bold text-danger">@niezaplacono</div>
-                        <div class="small text-muted">uczniów</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="rounded-3 bg-warning bg-opacity-10 text-warning p-3">
-                        <i class="bi bi-person-plus fs-3"></i>
-                    </div>
-                    <div>
-                        <div class="text-muted small">Nie przydzielono</div>
-                        <div class="fs-3 fw-bold text-warning">@nieprzydzielono</div>
-                        <div class="small text-muted">uczniów</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
+   
     <!-- Lista uczniów -->
     <div class="card border-0 shadow-sm">
 
@@ -117,8 +62,7 @@
                         <th>Uczeń</th>
                         <th>Status płatności</th>
                         <th>Data zapłaty</th>
-                        <th class="text-end">Kwota</th>
-                        <th class="text-center">Akcja</th>
+                              <th class="text-center">Akcja</th>
                     </tr>
                 </thead>
 
@@ -150,27 +94,29 @@
                                     @uczen.Nazwisko
                                 </td>
 
-                                <td>
-                                    @if (!uczen.CzyPrzydzielono)
+                                <td class="status-platnosci" onclick="zmianastatus('@uczen.UczenId')">
+                                    @switch (uczen.StanPlatnosc)
                                     {
-                                        <span class="badge rounded-pill bg-warning bg-opacity-25 text-dark border border-warning-subtle px-3 py-2">
-                                            <i class="bi bi-dash-circle me-1"></i>
-                                            Nie przydzielono
-                                        </span>
-                                    }
-                                    else if (uczen.CzyZaplacono)
-                                    {
-                                        <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success-subtle px-3 py-2">
-                                            <i class="bi bi-check-circle me-1"></i>
-                                            Zapłacono
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger-subtle px-3 py-2">
-                                            <i class="bi bi-clock me-1"></i>
-                                            Nie zapłacono
-                                        </span>
+                                        case StanPlatnosc.Brak:
+                                            <span class="badge rounded-pill bg-warning text-dark px-3 py-2">
+                                                <i class="bi bi-person-plus me-1"></i>
+                                                Nie przydzielono
+                                            </span>
+                                            break;
+
+                                        case StanPlatnosc.DoZaplaty:
+                                            <span class="badge rounded-pill bg-danger text-white px-3 py-2">
+                                                <i class="bi bi-clock-history me-1"></i>
+                                                Do zapłaty
+                                            </span>
+                                            break;
+
+                                        case StanPlatnosc.Zaplacono:
+                                            <span class="badge rounded-pill bg-success text-white px-3 py-2">
+                                                <i class="bi bi-check-circle-fill me-1"></i>
+                                                Zapłacono
+                                            </span>
+                                            break;
                                     }
                                 </td>
 
@@ -178,42 +124,15 @@
                                     @(uczen.DataZaplaty?.ToString("dd.MM.yyyy") ?? "—")
                                 </td>
 
-                                <td class="text-end fw-semibold">
-                                    @if (uczen.CzyPrzydzielono)
-                                    {
-                                        @Model.WydatekDane.Kwota.ToString("C")
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">—</span>
-                                    }
-                                </td>
+                               
 
                                 <td class="text-center">
-                                    @if (!uczen.CzyPrzydzielono)
-                                    {
-                                        <a asp-page="/Wydatki/Przypisz"
-                                           asp-route-uczenId="@uczen.UczenId"
-                                           asp-route-wydatekId="@Model.WydatekDane.Id"
-                                           class="btn btn-sm btn-outline-primary"
-                                           title="Przydziel wydatek">
-                                            <i class="bi bi-plus-lg me-1"></i>
-                                            Przydziel
-                                        </a>
-                                    }
-                                    else if (!uczen.CzyZaplacono)
-                                    {
-                                        <span class="text-muted small">
-                                            Oczekuje na wpłatę
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-success small">
-                                            <i class="bi bi-check2-all me-1"></i>
-                                            Rozliczono
-                                        </span>
-                                    }
+                                    <button type="button" onclick="usun('@uczen.UczenId','@uczen.Nazwisko')"
+                                            class="btn btn-sm btn-outline-danger usun-przydzial"
+                                            title="Usuń przypisanie"
+                                            aria-label="Usuń przypisanie">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
                                 </td>
                             </tr>
                         }
@@ -233,5 +152,39 @@
 </div>
 <script>
     const wydatekId = @Model.WydatekDane.Id;
-    console.log(`Wydatek ID: ${wydatekId}`);
+    function zmianastatus(uczenId) {
+        postjson(
+            `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
+            {},
+            function (wynik) {
+                console.log("Sukces:", wynik.message);
+                load();
+            },
+            function (xhr, status, error) {
+                console.error("HTTP:", xhr.status);
+                console.error("Status:", status);
+                console.error("Błąd:", error);
+                console.error("Odpowiedź:", xhr.responseText);
+            }
+        );
+    }
+       function usun(uczenId, nazwisko) {
+        showGlobalConfirmModal(function () {
+            postjson(
+                `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/usun`,
+                {},
+                function (wynik) {
+                    console.log("Sukces:", wynik.message);
+                    load();
+                },
+                function (xhr, status, error) {
+                    console.error("HTTP:", xhr.status);
+                    console.error("Status:", status);
+                    console.error("Błąd:", error);
+                    console.error("Odpowiedź:", xhr.responseText);
+                }
+            );
+        }, `Czy na pewno chcesz usunąć przypisanie wydatku dla ucznia ${nazwisko}?`);
+    }
+
 </script>

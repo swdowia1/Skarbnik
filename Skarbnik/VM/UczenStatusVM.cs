@@ -1,4 +1,6 @@
-﻿namespace Skarbnik.VM
+﻿using Skarbnik.Enums;
+
+namespace Skarbnik.VM
 {
     public class UczenStatusVM
     {
@@ -7,12 +9,7 @@
 
 
         public string Nazwisko { get; set; } = string.Empty;
-
-        public bool CzyPrzydzielono { get; set; }
-
-        public int? PrzypisanieId { get; set; }
-
-        public bool CzyZaplacono { get; set; }
+        public StanPlatnosc StanPlatnosc { get; set; }
 
         public DateTime? DataZaplaty { get; set; }
     }

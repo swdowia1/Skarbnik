@@ -17,36 +17,9 @@ namespace Skarbnik
             _context = context;
         }
 
-        [HttpPost("deletelevel")]
-        public async Task<ActionResult<int>> deletelevel(AddUczenWydatekWM add)
-        {
-           
-            return new JsonResult(1);
-        }
+       
 
-        //// Czwarta metoda GET zwracająca listę Job
-        //[HttpPost("addtask")]
-        //public async Task<ActionResult<int>> addtask([FromBody] AddTask dane)
-        //{
-
-
-
-        //    return new JsonResult(1);
-        //}
-        //deleteTasktime
-        [HttpPost("deleteTasktime")]
-        public async Task<ActionResult<int>> deleteTasktime([FromBody] int val)
-        {
-
-            return new JsonResult(1);
-        }
-        // Czwarta metoda GET zwracająca listę Job
-        [HttpPost("deleteTask")]
-        public async Task<ActionResult<int>> deleteTask([FromBody] int val)
-        {
-
-            return new JsonResult(1);
-        }
+ 
         // Oznaczenie wpłaty jako zapłaconej
         [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/zaplacono")]
         public async Task<IActionResult> OznaczJakoZaplacono(
@@ -79,9 +52,10 @@ namespace Skarbnik
         }
 
 
+
         // Cofnięcie potwierdzenia wpłaty
-        [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/cofnij-wplate")]
-        public async Task<IActionResult> CofnijWplate(
+        [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/usun")]
+        public async Task<IActionResult> UsunWpate(
             int wydatekId,
             int uczenId)
         {
@@ -89,25 +63,66 @@ namespace Skarbnik
                 .FirstOrDefaultAsync(x =>
                     x.WydatekId == wydatekId &&
                     x.UczenId == uczenId);
-
-            if (przypisanie == null)
+            if(przypisanie == null)
             {
-                return NotFound(new
+                return Ok(new
                 {
                     message = "Nie znaleziono przypisania ucznia do wydatku."
                 });
             }
-
-            przypisanie.CzyZaplacono = false;
-            przypisanie.DataZaplaty = null;
-
+           _context.UczenWydatki.Remove(przypisanie);
             await _context.SaveChangesAsync();
 
             return Ok(new
             {
-                message = "Cofnięto potwierdzenie wpłaty."
+                message = "Usunięto przypisanie ucznia do wydatku."
             });
         }
+        //`/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
+        [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/zmianastatus")]
+        public async Task<IActionResult> zmianastatus(
+           int wydatekId,
+           int uczenId)
+        {
+            var przypisanie = await _context.UczenWydatki
+                .FirstOrDefaultAsync(x =>
+                    x.WydatekId == wydatekId &&
+                    x.UczenId == uczenId);
+            if (przypisanie == null)
+            {
+              UczenWydatek uw=new UczenWydatek();
+                uw.WydatekId=wydatekId;
+                uw.UczenId=uczenId;
+                uw.CzyZaplacono=false;
+                _context.UczenWydatki.Add(uw);
+                _context.SaveChanges();
 
+                return Ok(new
+                {
+                    message = "Dodano przypisanie ucznia do wydatku."
+                });
+            }
+            if (przypisanie.CzyZaplacono == false)
+            {
+                przypisanie.CzyZaplacono = true;
+                przypisanie.DataZaplaty = DateTime.Now;
+                _context.SaveChanges();
+                return Ok(new
+                {
+                    message = "Oznaczono jako zapłacone."
+                });
+            }
+            else
+            {
+                przypisanie.CzyZaplacono = false;
+                przypisanie.DataZaplaty = null;
+                _context.SaveChanges();
+                return Ok(new
+                {
+                    message = "Oznaczono jako niezapłacone."
+                });
+            }
+           
+        }
     }
 }
