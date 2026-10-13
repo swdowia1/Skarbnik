@@ -11,9 +11,17 @@
         <table class="table table-bordered table-hover align-middle">
             <thead class="table-light">
                 <tr>
-                    <th class="text-nowrap">Uczeń</th> @foreach (var wydatek in Model.Podsumowanie.Wydatki) {
-                    <th class="text-end text-nowrap"> @wydatek.Nazwa </th>
-                                        }
+                    <th class="text-nowrap">Uczeń</th>
+                    @foreach (var wydatek in Model.Podsumowanie.Wydatki)
+                    {
+                        <th class="text-end text-nowrap">
+                            <a asp-page="/Wydatek"
+                               asp-route-id="@wydatek.Id"
+                               class="text-decoration-none">
+                                @wydatek.Nazwa
+                            </a>
+                        </th>
+                    }
                     <th class="text-end text-nowrap">Nie zapłacone</th>
                 </tr>
             </thead>
@@ -25,11 +33,11 @@
                         @foreach (var komorka in uczen.Wydatki)
                         {
                             <td class="text-end text-nowrap
-                    @(komorka.Kwota.HasValue
-                                                                        ? (!komorka.CzyZaplacono
-                                                                            ? "text-danger fw-bold"
-                                                                            : "table-success")
-                                                                        : "table-warning")">
+                            @(komorka.Kwota.HasValue
+                                                                                                        ? (!komorka.CzyZaplacono
+                                                                                                            ? "text-danger fw-bold"
+                                                                                                            : "table-success")
+                                                                                                        : "table-warning")">
 
                         @if (komorka.Kwota.HasValue)
                                 {
@@ -41,7 +49,7 @@
                                 }
                                 else
                                 {
-                                   @*  <a asp-page="/Przypisz"
+                                    @*  <a asp-page="/Przypisz"
                                        asp-route-uczenId="@komorka.UczenId"
                                        asp-route-wydatekId="@komorka.WydatekId"
                                        class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center"

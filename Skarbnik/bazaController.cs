@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Skarbnik.DB;
 using Skarbnik.VM;
 
@@ -46,7 +47,67 @@ namespace Skarbnik
 
             return new JsonResult(1);
         }
+        // Oznaczenie wpłaty jako zapłaconej
+        [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/zaplacono")]
+        public async Task<IActionResult> OznaczJakoZaplacono(
+            int wydatekId,
+            int uczenId)
+        {
+            var przypisanie = await _context.UczenWydatki
+                .FirstOrDefaultAsync(x =>
+                    x.WydatekId == wydatekId &&
+                    x.UczenId == uczenId);
 
-       
+            if (przypisanie == null)
+            {
+                return NotFound(new
+                {
+                    message = "Uczeń nie jest przypisany do tego wydatku."
+                });
+            }
+
+            przypisanie.CzyZaplacono = true;
+            przypisanie.DataZaplaty = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Wpłatę oznaczono jako zapłaconą.",
+                dataZaplaty = przypisanie.DataZaplaty
+            });
+        }
+
+
+        // Cofnięcie potwierdzenia wpłaty
+        [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/cofnij-wplate")]
+        public async Task<IActionResult> CofnijWplate(
+            int wydatekId,
+            int uczenId)
+        {
+            var przypisanie = await _context.UczenWydatki
+                .FirstOrDefaultAsync(x =>
+                    x.WydatekId == wydatekId &&
+                    x.UczenId == uczenId);
+
+            if (przypisanie == null)
+            {
+                return NotFound(new
+                {
+                    message = "Nie znaleziono przypisania ucznia do wydatku."
+                });
+            }
+
+            przypisanie.CzyZaplacono = false;
+            przypisanie.DataZaplaty = null;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Cofnięto potwierdzenie wpłaty."
+            });
+        }
+
     }
 }
