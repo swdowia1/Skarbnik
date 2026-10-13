@@ -50,7 +50,7 @@ namespace Skarbnik.Pages
                     uw.WydatekId,
                     uw.CzyZaplacono,
                     Kwota = uw.Wydatek.Kwota
-                })
+                })                      
                 .ToListAsync();
 
             var mapa = przypisania.ToDictionary(
@@ -68,7 +68,7 @@ namespace Skarbnik.Pages
                 {
                     Id = wydatek.Id,
                     Nazwa = wydatek.Nazwa,
-
+                    Kwota = wydatek.Kwota,
                     Suma = przypisane.Sum(p => p.Kwota),
 
                     SumaNiezaplacona = przypisane
@@ -94,7 +94,9 @@ namespace Skarbnik.Pages
                         {
                             Id = przypisanie.id,
                             Kwota = przypisanie.Kwota,
-                            CzyZaplacono = przypisanie.CzyZaplacono
+                            CzyZaplacono = przypisanie.CzyZaplacono,
+                            Nazwa = wydatek.Nazwa
+
                         });
 
                         if (!przypisanie.CzyZaplacono)
@@ -109,7 +111,8 @@ namespace Skarbnik.Pages
                         {
                             Kwota = null,
                             UczenId = uczen.Id,
-                            WydatekId = wydatek.Id
+                            WydatekId = wydatek.Id,
+                            Nazwa = wydatek.Nazwa
                         });
                     }
                 }

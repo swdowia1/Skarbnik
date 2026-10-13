@@ -14,7 +14,7 @@
                     <th class="text-nowrap">Uczeń</th>
                     @foreach (var wydatek in Model.Podsumowanie.Wydatki)
                     {
-                        <th class="text-end text-nowrap">
+                        <th title="@wydatek.Kwota" class="text-end text-nowrap nazwa-wydatku-pionowo">
                             <a asp-page="/Wydatek"
                                asp-route-id="@wydatek.Id"
                                class="text-decoration-none">
@@ -32,7 +32,7 @@
                         <td class="text-nowrap">  @uczen.Nazwisko </td>
                         @foreach (var komorka in uczen.Wydatki)
                         {
-                            <td class="text-end text-nowrap
+                            <td title="@uczen.Nazwisko --> @komorka.Nazwa" class="text-end text-nowrap
                             @(komorka.Kwota.HasValue
                                                                                                         ? (!komorka.CzyZaplacono
                                                                                                             ? "text-danger fw-bold"

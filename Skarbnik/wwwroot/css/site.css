@@ -91,4 +91,11 @@
     opacity: 0.55;
 }
 
-```
+.nazwa-wydatku-pionowo {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    text-align: left;
+    vertical-align: middle;
+    padding: 10px;
+}

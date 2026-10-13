@@ -7,7 +7,7 @@ namespace Skarbnik.Pages
 {
     public class DodajWydatekModel : PageModel
     {
-        private readonly AppDbContext _context; 
+        private readonly AppDbContext _context;
         [BindProperty]
         public string Nazwa { get; set; } = string.Empty;
 
@@ -18,27 +18,28 @@ namespace Skarbnik.Pages
             _context = context;
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostDodajAsync()
         {
-            if (string.IsNullOrWhiteSpace(Nazwa))
-            {
-                ModelState.AddModelError(
-                    nameof(Nazwa),
-                    "Podaj nazwê wydatku.");
-            }
-
-            if (Kwota <= 0)
-            {
-                ModelState.AddModelError(
-                    nameof(Kwota),
-                    "Kwota musi byæ wiêksza od zera.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-             
+            if (!WalidujDane())
                 return Page();
-            }
+
+            var wydatek = new Wydatek
+            {
+                Nazwa = Nazwa.Trim(),
+                Kwota = Kwota
+            };
+
+            _context.Wydatki.Add(wydatek);
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage("/Index");
+
+        }
+
+        public async Task<IActionResult> OnPostDodajDlaWszystkichAsync()
+        {
+            if (!WalidujDane())
+                return Page();
 
             var uczniowie = await _context.Uczniowie
                 .AsNoTracking()
@@ -65,8 +66,25 @@ namespace Skarbnik.Pages
             }
 
             await _context.SaveChangesAsync();
-
             return RedirectToPage("/Index");
+
         }
+
+        private bool WalidujDane()
+        {
+            if (string.IsNullOrWhiteSpace(Nazwa))
+            {
+                ModelState.AddModelError(nameof(Nazwa), "Podaj nazwê wydatku.");
+            }
+
+            if (Kwota <= 0)
+            {
+                ModelState.AddModelError(nameof(Kwota), "Kwota musi byæ wiêksza od zera.");
+            }
+
+            return ModelState.IsValid;
+
         }
+
+    }
 }

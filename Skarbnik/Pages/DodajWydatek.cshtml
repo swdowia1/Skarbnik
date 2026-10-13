@@ -33,12 +33,22 @@
                     <span asp-validation-for="Kwota" class="text-danger"></span>
                 </div>
 
-                
+
 
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Zapisz wydatek</button>
+                    <button type="submit"
+                            asp-page-handler="Dodaj"
+                            class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Dodaj wydatek
+                    </button>
 
-                    <a asp-page="/Index" class="btn btn-outline-secondary"> Anuluj </a>
+                    <button type="submit"
+                            asp-page-handler="DodajDlaWszystkich"
+                            class="btn btn-success">
+                        <i class="bi bi-people me-1"></i>
+                        Dodaj i przypisz wszystkim
+                    </button>
                 </div>
             </form>
         </div>
