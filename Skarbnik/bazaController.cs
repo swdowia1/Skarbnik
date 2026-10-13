@@ -78,8 +78,38 @@ namespace Skarbnik
                 message = "Usunięto przypisanie ucznia do wydatku."
             });
         }
-        //`/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
-        [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/zmianastatus")]
+        // /api/baza/wydatek/${wydatekId}/usun`
+        [HttpPost("wydatek/{wydatekId:int}/usun")]
+        public async Task<IActionResult> UsunWydatek(int wydatekId )
+        {
+            var wydatek = await _context.Wydatki
+        .FirstOrDefaultAsync(w => w.Id == wydatekId);
+
+            if (wydatek == null)
+            {
+                return NotFound(new
+                {
+                    message = "Nie znaleziono wydatku."
+                });
+            }
+
+            var przypisania = await _context.UczenWydatki
+                .Where(uw => uw.WydatekId == wydatekId)
+                .ToListAsync();
+
+            _context.UczenWydatki.RemoveRange(przypisania);
+            _context.Wydatki.Remove(wydatek);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Wydatek został usunięty."
+            });
+        }
+        
+            //`/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
+            [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/zmianastatus")]
         public async Task<IActionResult> zmianastatus(
            int wydatekId,
            int uczenId)

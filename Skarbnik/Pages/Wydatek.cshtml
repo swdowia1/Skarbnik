@@ -34,6 +34,12 @@
             <i class="bi bi-arrow-left me-1"></i>
             Powrót do podsumowania
         </a>
+        <button type="button" onclick="usunWydatek()"
+                class="btn btn-sm btn-outline-danger usun-przydzial"
+                title="Usuń przypisanie"
+                aria-label="Usuń przypisanie">
+            Usuń wydatek
+        </button>
     </div>
 
    
@@ -152,6 +158,25 @@
 </div>
 <script>
     const wydatekId = @Model.WydatekDane.Id;
+    function usunWydatek()
+    {
+       showGlobalConfirmModal(function () {
+            postjson(
+                `/api/baza/wydatek/${wydatekId}/usun`,
+                {},
+                function (wynik) {
+                    console.log("Sukces:", wynik.message);
+                    window.location.href = "/Index";
+                },
+                function (xhr, status, error) {
+                    console.error("HTTP:", xhr.status);
+                    console.error("Status:", status);
+                    console.error("Błąd:", error);
+                    console.error("Odpowiedź:", xhr.responseText);
+                }
+            );
+        }, `Czy na pewno chcesz usunąć cały wydatek`);
+    }
     function zmianastatus(uczenId) {
         postjson(
             `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
@@ -168,6 +193,7 @@
             }
         );
     }
+    
        function usun(uczenId, nazwisko) {
         showGlobalConfirmModal(function () {
             postjson(
