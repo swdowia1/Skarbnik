@@ -103,7 +103,11 @@
 
                                 <td class="fw-semibold">
                                     <i class="bi bi-person-circle text-secondary me-2"></i>
-                                    @uczen.Nazwisko
+                                    <a asp-page="/UczenWydatki"
+                                       asp-route-id="@uczen.UczenId"
+                                       class="text-decoration-none fw-semibold">
+                                        @uczen.Nazwisko
+                                    </a>
                                 </td>
 
                                 <td class="status-platnosci hand" onclick="zmianastatus('@uczen.UczenId')">

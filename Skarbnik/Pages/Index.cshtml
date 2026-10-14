@@ -33,7 +33,13 @@
                 @foreach (var uczen in Model.Podsumowanie.Uczniowie)
                 {
                     <tr>
-                        <td class="text-nowrap">  @uczen.Nazwisko </td>
+                        <td class="text-nowrap">
+                            <a asp-page="/UczenWydatki"
+                               asp-route-id="@uczen.Id"
+                               class="text-decoration-none fw-semibold">
+                                @uczen.Nazwisko
+                            </a>
+                        </td>
                         @foreach (var komorka in uczen.Wydatki)
                         {
                             <td title="@uczen.Nazwisko --> @komorka.Nazwa" class="text-end text-nowrap

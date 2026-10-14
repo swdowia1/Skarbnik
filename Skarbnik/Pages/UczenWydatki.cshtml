@@ -1,0 +1,171 @@
+﻿@page "{id:int}"
+@model Skarbnik.Pages.UczenWydatkiModel
+@using Skarbnik.Extensions
+
+<div class="container-fluid mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-1">
+                <i class="bi bi-person-lines-fill me-2"></i>
+                @Model.UczenDane.Nazwisko
+            </h1>
+            <div class="text-muted">Wydatki i status płatności ucznia</div>
+        </div>
+
+        <a asp-page="/Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Powrót
+        </a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted">Suma przypisanych wydatków</div>
+                    <div class="fs-3 fw-bold">
+                        @Model.SumaWszystkich.ToString("N2") zł
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted">Pozostało do zapłaty</div>
+                    <div class="fs-3 fw-bold text-danger">
+                        @Model.SumaNiezaplaconych.ToString("N2") zł
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted">Liczba przypisanych wydatków</div>
+                    <div class="fs-3 fw-bold">@Model.Wydatki.Count</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light fw-bold">
+            Lista wydatków
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Wydatek</th>
+                        <th class="text-end">Kwota</th>
+                        <th>Status</th>
+                        <th>Data zapłaty</th>
+                        <th class="text-end">Szczegóły</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Wydatki.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                Brak przypisanych wydatków.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var pozycja in Model.Wydatki)
+                        {
+                            <tr>
+                                <td class="fw-semibold">
+                                   
+                                    <a asp-page="/Wydatek"
+                                       asp-route-id="@pozycja.Wydatek.Id"
+                                       class="text-decoration-none">
+                                        @pozycja.Wydatek.Nazwa
+                                    </a>
+                                </td>
+
+                                <td class="text-end text-nowrap">
+                                    @pozycja.Wydatek.Kwota.ToString("N2") zł
+                                </td>
+
+                                <td>
+                                    @if (pozycja.CzyZaplacono)
+                                    {
+                                        <span class="badge rounded-pill px-3 py-2"
+                                              style="background-color: #198754; color: #fff; font-size: 0.85rem;">
+                                            <i class="bi bi-check-circle-fill me-1"></i>
+                                            Zapłacono
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill px-3 py-2"
+                                              style="background-color: #dc3545; color: #fff; font-size: 0.85rem;">
+                                            <i class="bi bi-exclamation-circle-fill me-1"></i>
+                                            Do zapłaty
+                                        </span>
+                                    }
+                                </td>
+
+                                <td class="text-nowrap">
+                                    @(pozycja.DataZaplaty?.ToTimeFull()?? "—")
+                                </td>
+
+                                <td class="text-end">
+                                    <a asp-page="/Wydatek"
+                                       asp-route-id="@pozycja.WydatekId"
+                                       class="btn btn-sm btn-outline-primary"
+                                       title="Szczegóły wydatku">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+                @if (Model.Wydatki.Any())
+                {
+                    <tfoot class="table-light fw-bold">
+                        <tr>
+                            <td>Razem</td>
+                            <td class="text-end text-nowrap">
+                                @Model.SumaWszystkich.ToString("N2") zł
+                            </td>
+                            <td colspan="3"></td>
+                        </tr>
+                    </tfoot>
+                }
+            </table>
+            @if (Model.WydatkiNieprzypisane.Any())
+            {
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header fw-bold">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Wydatki nieprzypisane uczniowi
+                    </div>
+
+                    <div class="card-body">
+                        @foreach (var p in Model.WydatkiNieprzypisane)
+                        {
+                            <span class="badge me-2 mb-2 px-3 py-2"
+                                  style="background-color: #fd7e14; color: white;">
+                                <a asp-page="/Wydatek"
+                                   asp-route-id="@p.Id"
+                                   class="text-decoration-none">
+                                    @p.Name
+                                </a>
+                            </span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
