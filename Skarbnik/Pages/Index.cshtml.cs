@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Skarbnik.DB;
 using Skarbnik.VM;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace Skarbnik.Pages
 {
@@ -14,7 +16,39 @@ namespace Skarbnik.Pages
         {
             _context = context;
         }
+        public IActionResult OnGetTestExcel()
+        {
+            using var package = new ExcelPackage();
 
+            var arkusz = package.Workbook.Worksheets.Add("Test");
+
+            arkusz.Cells["A1"].Value = "Uczeń";
+            arkusz.Cells["B1"].Value = "Kwota";
+            arkusz.Cells["C1"].Value = "Status";
+
+            arkusz.Cells["A2"].Value = "Jan Kowalski";
+            arkusz.Cells["B2"].Value = 50.00;
+            arkusz.Cells["C2"].Value = "Nie zapłacono";
+
+            // Formatowanie nagłówka
+            using (var zakres = arkusz.Cells["A1:C1"])
+            {
+                zakres.Style.Font.Bold = true;
+                zakres.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                zakres.Style.Fill.BackgroundColor.SetColor(
+                    System.Drawing.Color.LightBlue);
+            }
+
+            arkusz.Cells["B2"].Style.Numberformat.Format = "#,##0.00 zł";
+            arkusz.Cells["A1:C2"].AutoFitColumns();
+
+            var plik = package.GetAsByteArray();
+
+            return File(
+                plik,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "TestEPPlus.xlsx");
+        }
         public PodsumowanieVM Podsumowanie { get; set; } = new();
 
         public async Task OnGetAsync()

@@ -14,4 +14,10 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 
 	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="EPPlus">
+			<HintPath>lib\EPPlus.dll</HintPath>
+			<Private>true</Private>
+		</Reference>
+	</ItemGroup>
 </Project>
