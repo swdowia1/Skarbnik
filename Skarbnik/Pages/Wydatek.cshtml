@@ -1,5 +1,6 @@
 ﻿@page "{id:int}"
 @using Skarbnik.Enums
+@using Skarbnik.Extensions
 
 @model Skarbnik.Pages.WydatekModel
 
@@ -100,7 +101,7 @@
                                     @uczen.Nazwisko
                                 </td>
 
-                                <td class="status-platnosci" onclick="zmianastatus('@uczen.UczenId')">
+                                <td class="status-platnosci hand" onclick="zmianastatus('@uczen.UczenId')">
                                     @switch (uczen.StanPlatnosc)
                                     {
                                         case StanPlatnosc.Brak:
@@ -127,7 +128,7 @@
                                 </td>
 
                                 <td class="text-muted">
-                                    @(uczen.DataZaplaty?.ToString("dd.MM.yyyy") ?? "—")
+                                    @(uczen.DataZaplaty?.ToTimeFull()?? "—")
                                 </td>
 
                                

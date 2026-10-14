@@ -32,7 +32,7 @@ namespace Skarbnik.Pages
 
             var wydatki = await _context.Wydatki
                 .AsNoTracking()
-                .OrderBy(w => w.Nazwa)
+                .OrderByDescending(w => w.CreatedAt)
                 .Select(w => new
                 {
                     w.Id,

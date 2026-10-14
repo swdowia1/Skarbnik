@@ -135,7 +135,7 @@ namespace Skarbnik
             if (przypisanie.CzyZaplacono == false)
             {
                 przypisanie.CzyZaplacono = true;
-                przypisanie.DataZaplaty = DateTime.Now;
+                przypisanie.DataZaplaty = DateTime.UtcNow;
                 _context.SaveChanges();
                 return Ok(new
                 {

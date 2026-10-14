@@ -1,5 +1,6 @@
 ﻿@page "{id:int}"
 @model Skarbnik.Pages.SzczegolyModel
+@using Skarbnik.Extensions
 
 
 
@@ -46,8 +47,7 @@
 
                 <dt class="col-sm-4">Data zapłaty</dt>
                 <dd class="col-sm-8">
-                    @(przypisanie.DataZaplaty?.ToLocalTime()
-                                        .ToString("dd.MM.yyyy HH:mm") ?? "Brak")
+                    @(przypisanie.DataZaplaty?.ToTimeFull() ?? "Brak")
                 </dd>
             </dl>
 

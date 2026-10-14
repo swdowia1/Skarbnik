@@ -99,3 +99,6 @@
     vertical-align: middle;
     padding: 10px;
 }
+.hand {
+    cursor: pointer;    
+}
