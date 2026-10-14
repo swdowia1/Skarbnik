@@ -144,3 +144,27 @@ postdata = function (n, t, i, r, u) {
     });
 };
 
+// zapis do pliku
+async function zapiszElementJakoJpg(elementId, nazwaPliku = 'obraz.jpg') {
+
+    const element = document.getElementById(elementId);
+
+    if (!element) {
+        alert(`Nie znaleziono elementu o id: ${elementId}`);
+        return;
+    }
+
+    const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true
+    });
+
+    const link = document.createElement('a');
+
+    link.download = nazwaPliku;
+    link.href = canvas.toDataURL('image/jpeg', 0.95);
+
+    link.click();
+}
+
