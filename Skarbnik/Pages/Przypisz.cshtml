@@ -1,5 +1,6 @@
 ﻿@page
 @model Skarbnik.Pages.PrzypiszModel
+@using Skarbnik.Extensions
 @{
 }
 <div class="container mt-4" style="max-width: 650px">
@@ -26,7 +27,7 @@
             <div class="mb-4">
                 <div class="text-muted small">Kwota do zapłaty</div>
                 <h3 class="text-primary">
-                    @Model.Wydatek.Kwota.ToString("N2") zł
+                    @Model.Wydatek.Kwota.ToPln()
                 </h3>
             </div>
 

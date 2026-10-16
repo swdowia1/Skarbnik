@@ -25,7 +25,7 @@
                 <div class="card-body">
                     <div class="text-muted">Suma przypisanych wydatków</div>
                     <div class="fs-3 fw-bold">
-                        @Model.SumaWszystkich.ToString("N2") zł
+                        @Model.SumaWszystkich.ToPln()
                     </div>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                 <div class="card-body">
                     <div class="text-muted">Pozostało do zapłaty</div>
                     <div class="fs-3 fw-bold text-danger">
-                        @Model.SumaNiezaplaconych.ToString("N2") zł
+                        @Model.SumaNiezaplaconych.ToPln()
                     </div>
                 </div>
             </div>
@@ -92,7 +92,7 @@
                                 </td>
 
                                 <td class="text-end text-nowrap">
-                                    @pozycja.Wydatek.Kwota.ToString("N2") zł
+                                    @pozycja.Wydatek.Kwota.ToPln()
                                 </td>
 
                                 <td>
@@ -129,7 +129,7 @@
                         <tr>
                             <td>Razem</td>
                             <td class="text-end text-nowrap">
-                                @Model.SumaWszystkich.ToString("N2") zł
+                                @Model.SumaWszystkich.ToPln()
                             </td>
                             <td colspan="3"></td>
                         </tr>

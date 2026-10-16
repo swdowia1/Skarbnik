@@ -2,8 +2,15 @@
 
 namespace Skarbnik.Extensions
 {
-    public static class DateTimeExtensions
+    public static class HelpExtensions
     {
+        private static readonly CultureInfo PolishCulture =
+           CultureInfo.GetCultureInfo("pl-PL");
+
+        public static string ToPln(this decimal value)
+        {
+            return value.ToString("C", PolishCulture);
+        }
         public static DateTime ToWarsawTime(this DateTime utcDateTime)
         {
             TimeZoneInfo warsawTimeZone =
@@ -20,7 +27,7 @@ namespace Skarbnik.Extensions
         {
             return dateTime.ToString(
                 "dddd, dd.MM.yyyy, 'godz.' HH:mm",
-                new CultureInfo("pl-PL"));
+                PolishCulture);
         }
 
         public static string ToTimeFull(this DateTime dateTime)

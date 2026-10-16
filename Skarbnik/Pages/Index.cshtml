@@ -1,5 +1,6 @@
 ﻿@page
 @model IndexModel
+@using Skarbnik.Extensions
 @{
     ViewData["Title"] = "Home page";
 
@@ -54,7 +55,7 @@
                                     <a asp-page="/Szczegoly"
                                        asp-route-id="@komorka.Id"
                                        class="text-reset text-decoration-none">
-                                        @komorka.Kwota.Value.ToString("N2")
+                                        @komorka.Kwota.Value.ToPln()
                                     </a>
                                 }
                                 else
@@ -78,22 +79,22 @@
 
                             </td>
                         }
-                        <td class="text-end text-nowrap @(uczen.SumaNiezaplacona > 0 ? " text-danger fw-bold" : "")"> @uczen.SumaNiezaplacona.ToString("N2") zł </td>
+                        <td class="text-end text-nowrap @(uczen.SumaNiezaplacona > 0 ? " text-danger fw-bold" : "")"> @uczen.SumaNiezaplacona.ToPln() </td>
                     </tr>
                 }
             </tbody>
             <tfoot>
                 <tr class="table-light fw-bold">
                     <td>Razem</td> @foreach (var wydatek in Model.Podsumowanie.Wydatki) {
-                    <td class="text-end text-nowrap"> @wydatek.Suma.ToString("N2") zł </td>
+                    <td class="text-end text-nowrap"> @wydatek.Suma.ToPln() </td>
                                         }
-                    <td class="text-end text-nowrap"> @Model.Podsumowanie.SumaWszystkichZaleglosci.ToString("N2") zł </td>
+                    <td class="text-end text-nowrap"> @Model.Podsumowanie.SumaWszystkichZaleglosci.ToPln() </td>
                 </tr>
                 <tr class="table-warning fw-bold">
                     <td>Nie zapłacone</td> @foreach (var wydatek in Model.Podsumowanie.Wydatki) {
-                    <td class="text-end text-nowrap text-danger"> @wydatek.SumaNiezaplacona.ToString("N2") zł </td>
+                    <td class="text-end text-nowrap text-danger"> @wydatek.SumaNiezaplacona.ToPln() </td>
                                         }
-                    <td class="text-end text-nowrap text-danger"> @Model.Podsumowanie.SumaWszystkichZaleglosci.ToString("N2") zł </td>
+                    <td class="text-end text-nowrap text-danger"> @Model.Podsumowanie.SumaWszystkichZaleglosci.ToPln() </td>
                 </tr>
             </tfoot>
         </table>
