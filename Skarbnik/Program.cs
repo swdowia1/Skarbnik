@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Skarbnik.DB;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -8,7 +10,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     ));
 // Add services to the container.
 builder.Services.AddRazorPages();
+var cultureInfo = new CultureInfo("pl-PL");
 
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("pl-PL");
+    options.SupportedCultures = new[] { cultureInfo };
+    options.SupportedUICultures = new[] { cultureInfo };
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

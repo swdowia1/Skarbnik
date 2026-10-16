@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Skarbnik.DB;
+using System.ComponentModel.DataAnnotations;
 
 namespace Skarbnik.Pages
 {
@@ -13,9 +14,15 @@ namespace Skarbnik.Pages
         public int? Id { get; set; }
 
         [BindProperty]
+        [Required(ErrorMessage = "Podaj nazwê wydatku.")]
+        [StringLength(100, ErrorMessage = "Nazwa mo¿e mieæ maksymalnie 100 znaków.")]
+        [Display(Name = "Nazwa wydatku")]
         public string Nazwa { get; set; } = string.Empty;
 
         [BindProperty]
+        [Range(typeof(decimal), "0,01", "999999999",
+            ErrorMessage = "Kwota musi wynosiæ co najmniej 0,01 z³.")]
+        [Display(Name = "Kwota (z³)")]
         public decimal Kwota { get; set; }
 
         public bool CzyEdycja => Id.HasValue;
