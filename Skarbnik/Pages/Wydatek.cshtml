@@ -35,6 +35,12 @@
             <i class="bi bi-arrow-left me-1"></i>
             Powrót do podsumowania
         </a>
+        <a asp-page="/DodajWydatek"
+           asp-route-id="@Model.WydatekDane.Id"
+           class="btn btn-outline-primary">
+            <i class="bi bi-pencil-square me-1"></i>
+            Edytuj wydatek
+        </a>
         <button type="button" onclick="usunWydatek()"
                 class="btn btn-sm btn-outline-danger usun-przydzial"
                 title="Usuń przypisanie"
@@ -44,7 +50,7 @@
         <button type="button"
                 class="btn btn-primary"
                 onclick="zapiszElementJakoJpg('glowny', 'wydatek.jpg')">
-            Zapisz plan jako JPG
+            Zapisz jako JPG
         </button>
     </div>
 

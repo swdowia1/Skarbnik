@@ -1,61 +1,70 @@
-﻿@page
+﻿@page "{id:int?}"
 @model Skarbnik.Pages.DodajWydatekModel
-<div class="container mt-4" style="max-width: 650px">
-    <h1 class="mb-4">Dodaj wydatek</h1>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <p class="text-muted">Nowy wydatek zostanie przypisany do wszystkich uczniów jako niezapłacony.</p>
+@{
+    ViewData["Title"] = Model.CzyEdycja
+        ? "Edycja wydatku"
+        : "Dodaj wydatek";
+}
 
-            <div class="alert alert-info">Liczba uczniów: <strong>wstaw liczba</strong></div>
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
 
-            <form method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <form method="post">
+        <input type="hidden" asp-for="Id" />
 
-                <div class="mb-3">
-                    <label asp-for="Nazwa" class="form-label"> Nazwa wydatku </label>
-
-                    <input asp-for="Nazwa" class="form-control" placeholder="Np. Wycieczka szkolna" />
-
-                    <span asp-validation-for="Nazwa" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Kwota" class="form-label"> Kwota na ucznia (zł) </label>
-
-                    <input asp-for="Kwota"
-                           type="number"
-                           min="0.01"
-                           step="0.01"
-                           class="form-control"
-                           placeholder="Np. 100,00" />
-
-                    <span asp-validation-for="Kwota" class="text-danger"></span>
-                </div>
-
-
-
-                <div class="d-flex gap-2">
-                    <button type="submit"
-                            asp-page-handler="Dodaj"
-                            class="btn btn-primary">
-                        <i class="bi bi-plus-circle me-1"></i>
-                        Dodaj wydatek
-                    </button>
-
-                    <button type="submit"
-                            asp-page-handler="DodajDlaWszystkich"
-                            class="btn btn-success">
-                        <i class="bi bi-people me-1"></i>
-                        Dodaj i przypisz wszystkim
-                    </button>
-                </div>
-            </form>
+        <div class="mb-3">
+            <label asp-for="Nazwa" class="form-label">
+                Nazwa wydatku
+            </label>
+            <input asp-for="Nazwa" class="form-control" />
+            <span asp-validation-for="Nazwa"
+                  class="text-danger"></span>
         </div>
-    </div>
+
+        <div class="mb-3">
+            <label asp-for="Kwota" class="form-label">
+                Kwota
+            </label>
+            <input asp-for="Kwota"
+                   type="number"
+                   step="0.01"
+                   min="0.01"
+                   class="form-control" />
+            <span asp-validation-for="Kwota"
+                  class="text-danger"></span>
+        </div>
+
+        @if (Model.CzyEdycja)
+        {
+            <button type="submit"
+                    asp-page-handler="ZapiszEdycje"
+                    class="btn btn-primary">
+                <i class="bi bi-save me-1"></i>
+                Zapisz zmiany
+            </button>
+        }
+        else
+        {
+            <button type="submit"
+                    asp-page-handler="Dodaj"
+                    class="btn btn-primary">
+                Dodaj wydatek
+            </button>
+
+            <button type="submit"
+                    asp-page-handler="DodajDlaWszystkich"
+                    class="btn btn-success">
+                Dodaj i przypisz wszystkim
+            </button>
+        }
+
+        <a asp-page="/Index" class="btn btn-outline-secondary">
+            Anuluj
+        </a>
+    </form>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-
