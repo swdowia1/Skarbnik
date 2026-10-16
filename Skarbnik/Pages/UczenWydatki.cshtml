@@ -65,7 +65,7 @@
                         <th class="text-end">Kwota</th>
                         <th>Status</th>
                         <th>Data zapłaty</th>
-                        <th class="text-end">Szczegóły</th>
+                       
                     </tr>
                 </thead>
                 <tbody>
@@ -118,14 +118,7 @@
                                     @(pozycja.DataZaplaty?.ToTimeFull()?? "—")
                                 </td>
 
-                                <td class="text-end">
-                                    <a asp-page="/Wydatek"
-                                       asp-route-id="@pozycja.WydatekId"
-                                       class="btn btn-sm btn-outline-primary"
-                                       title="Szczegóły wydatku">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                </td>
+                              
                             </tr>
                         }
                     }
@@ -145,23 +138,32 @@
             </table>
             @if (Model.WydatkiNieprzypisane.Any())
             {
-                <div class="card shadow-sm mt-4">
-                    <div class="card-header fw-bold">
-                        <i class="bi bi-info-circle me-2"></i>
-                        Wydatki nieprzypisane uczniowi
+                <div class="card border-0 shadow-sm mt-4">
+                    <div class="card-header bg-warning-subtle py-3">
+                        <h5 class="mb-0">
+                            <i class="bi bi-exclamation-circle me-2"></i>
+                            Wydatki nieprzypisane uczniowi
+                        </h5>
+                        <small class="text-muted">
+                            Wybierz wydatek, aby przypisać go temu uczniowi.
+                        </small>
                     </div>
 
-                    <div class="card-body">
-                        @foreach (var p in Model.WydatkiNieprzypisane)
+                    <div class="list-group list-group-flush">
+                        @foreach (var nazwa in Model.WydatkiNieprzypisane)
                         {
-                            <span class="badge me-2 mb-2 px-3 py-2"
-                                  style="background-color: #fd7e14; color: white;">
-                                <a asp-page="/Wydatek"
-                                   asp-route-id="@p.Id"
-                                   class="text-decoration-none">
-                                    @p.Name
-                                </a>
-                            </span>
+                            <div class="list-group-item d-flex justify-content-between align-items-center gap-3 py-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-receipt text-warning fs-5"></i>
+                                    <span class="fw-semibold">@nazwa.Name</span>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary" onclick="dodaj('@nazwa.Id')">
+                                        <i class="bi bi-plus-circle me-1"></i>
+                                        Przypisz uczniowi
+                                    </button>
+                                </div>
+
+                                <span class="badge text-bg-warning">Nieprzypisany</span>
+                            </div>
                         }
                     </div>
                 </div>
@@ -169,3 +171,23 @@
         </div>
     </div>
 </div>
+<script>
+     const uczenId = @Model.UczenId;
+    function dodaj(wydatekId) {
+      // alert("Funkcja dodaj wywołana dla wydatku o ID: " + wydatekId + " i ucznia o ID: " + uczenId);
+       postjson(
+            `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
+            {},
+            function (wynik) {
+                console.log("Sukces:", wynik.message);
+                load();
+            },
+            function (xhr, status, error) {
+                console.error("HTTP:", xhr.status);
+                console.error("Status:", status);
+                console.error("Błąd:", error);
+                console.error("Odpowiedź:", xhr.responseText);
+            }
+        );
+    }
+</script>

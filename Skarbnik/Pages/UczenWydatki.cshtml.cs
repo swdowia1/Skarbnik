@@ -9,7 +9,7 @@ namespace Skarbnik.Pages
     public class UczenWydatkiModel : PageModel
     {
         private readonly AppDbContext _context;
-
+        public int UczenId { get; set; }
         public UczenWydatkiModel(AppDbContext context)
         {
             _context = context;
@@ -25,6 +25,7 @@ namespace Skarbnik.Pages
         public decimal SumaNiezaplaconych { get; set; }
         public async Task<IActionResult> OnGetAsync(int id)
         {
+            UczenId = id;
             var uczen = await _context.Uczniowie
                 .FirstOrDefaultAsync(u => u.Id == id);
 
