@@ -65,7 +65,7 @@
                         <th class="text-end">Kwota</th>
                         <th>Status</th>
                         <th>Data zapłaty</th>
-                       
+                       <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -117,7 +117,14 @@
                                 <td class="text-nowrap">
                                     @(pozycja.DataZaplaty?.ToTimeFull()?? "—")
                                 </td>
-
+                                <td class="text-center">
+                                    <button type="button" onclick="usun('@pozycja.WydatekId','@pozycja.Wydatek.Nazwa')"
+                                            class="btn btn-sm btn-outline-danger usun-przydzial"
+                                            title="Usuń przypisanie"
+                                            aria-label="Usuń przypisanie">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </td>
                               
                             </tr>
                         }
@@ -173,6 +180,26 @@
 </div>
 <script>
      const uczenId = @Model.UczenId;
+     //[HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/usun")]
+     function usun(wydatekId, wydatekNazwa) {
+           showGlobalConfirmModal(function () {
+            postjson(
+                `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/usun`,
+                {},
+                function (wynik) {
+                    console.log("Sukces:", wynik.message);
+                    window.location.href = "/Index";
+                },
+                function (xhr, status, error) {
+                    console.error("HTTP:", xhr.status);
+                    console.error("Status:", status);
+                    console.error("Błąd:", error);
+                    console.error("Odpowiedź:", xhr.responseText);
+                }
+            );
+        }, `Czy na pewno chcesz usunąć przypisanie wydatku "${wydatekNazwa}" dla tego ucznia?`);
+        
+    }
     function dodaj(wydatekId) {
       // alert("Funkcja dodaj wywołana dla wydatku o ID: " + wydatekId + " i ucznia o ID: " + uczenId);
        postjson(
