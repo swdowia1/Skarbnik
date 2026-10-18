@@ -95,7 +95,7 @@
                                     @pozycja.Wydatek.Kwota.ToPln()
                                 </td>
 
-                                <td>
+                                <td class="hand" onclick="zmianastatus('@pozycja.Wydatek.Id')">
                                     @if (pozycja.CzyZaplacono)
                                     {
                                         <span class="badge rounded-pill px-3 py-2"
@@ -203,6 +203,22 @@
     function dodaj(wydatekId) {
       // alert("Funkcja dodaj wywołana dla wydatku o ID: " + wydatekId + " i ucznia o ID: " + uczenId);
        postjson(
+            `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
+            {},
+            function (wynik) {
+                console.log("Sukces:", wynik.message);
+                load();
+            },
+            function (xhr, status, error) {
+                console.error("HTTP:", xhr.status);
+                console.error("Status:", status);
+                console.error("Błąd:", error);
+                console.error("Odpowiedź:", xhr.responseText);
+            }
+        );
+    }
+     function zmianastatus(wydatekId) {
+        postjson(
             `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
             {},
             function (wynik) {

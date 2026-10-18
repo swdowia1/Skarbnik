@@ -1,0 +1,104 @@
+```css
+/* Okno potwierdzenia */
+.confirm-modal .modal-dialog {
+    max-width: 420px;
+}
+
+.confirm-modal .modal-content {
+    border: none;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.20);
+}
+
+/* Ikona */
+.confirm-modal-icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #fff4e5;
+    color: #e69500;
+    font-size: 30px;
+}
+
+/* Nag³ówek */
+.confirm-modal-title {
+    color: #1e293b;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+/* Treœæ */
+.confirm-modal-message {
+    color: #64748b;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+/* Stopka i przyciski */
+.confirm-modal .modal-footer {
+    display: flex;
+    gap: 12px;
+}
+
+    .confirm-modal .modal-footer .btn {
+        flex: 1;
+        min-height: 44px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+/* Anuluj */
+.btn-confirm-cancel {
+    color: #475569;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+}
+
+    .btn-confirm-cancel:hover {
+        color: #1e293b;
+        background: #e2e8f0;
+    }
+
+/* PotwierdŸ */
+.btn-confirm-ok {
+    color: #ffffff;
+    background: #dc3545;
+    border: 1px solid #dc3545;
+}
+
+    .btn-confirm-ok:hover {
+        color: #ffffff;
+        background: #bb2d3b;
+        border-color: #bb2d3b;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+    }
+
+.confirm-modal .modal-footer .btn:active {
+    transform: scale(0.98);
+}
+
+/* Delikatne przyciemnienie t³a */
+.modal-backdrop.show {
+    opacity: 0.55;
+}
+
+.nazwa-wydatku-pionowo {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    text-align: left;
+    vertical-align: middle;
+    padding: 10px;
+}
+.hand {
+    cursor: pointer;    
+}
