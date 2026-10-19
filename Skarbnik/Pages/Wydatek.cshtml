@@ -30,12 +30,12 @@
             </div>
         </div>
 
-        <a asp-page="/Index"
+        <a id="aPrev" asp-page="/Index"
            class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i>
             Powrót do podsumowania
         </a>
-        <a asp-page="/DodajWydatek"
+        <a id="aAdd" asp-page="/DodajWydatek"
            asp-route-id="@Model.WydatekDane.Id"
            class="btn btn-outline-primary">
             <i class="bi bi-pencil-square me-1"></i>
@@ -49,7 +49,7 @@
         </button>
         <button id="btnZapisz" type="button"
                 class="btn btn-primary"
-                onclick="zapiszElementJakoJpg2('glowny', 'wydatek.jpg',['btnZapisz', 'btnUsun', 'btnDrukuj'])">
+                onclick="zapiszElementJakoJpg2('glowny', 'wydatek.jpg',['btnZapisz', 'btnUsun', 'aPrev','aAdd'])">
             Zapisz jako JPG
         </button>
     </div>

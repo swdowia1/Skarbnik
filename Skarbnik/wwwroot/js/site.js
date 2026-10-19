@@ -168,3 +168,55 @@ async function zapiszElementJakoJpg(elementId, nazwaPliku = 'obraz.jpg') {
     link.click();
 }
 
+async function zapiszElementJakoJpg2(
+    elementId,
+    nazwaPliku = 'obraz.jpg',
+    listaIdDoUkrycia = []
+) {
+    const element = document.getElementById(elementId);
+
+    if (!element) {
+        alert(`Nie znaleziono elementu o id: ${elementId}`);
+        return;
+    }
+
+    // Znajdź elementy do ukrycia
+    const elementyDoUkrycia = listaIdDoUkrycia
+        .map(id => document.getElementById(id))
+        .filter(el => el && element.contains(el));
+
+    // Zapamiętaj dotychczasową widoczność
+    const poprzedniaWidocznosc = elementyDoUkrycia.map(el => ({
+        element: el,
+        display: el.style.display
+    }));
+
+    try {
+        // Ukryj wskazane elementy
+        elementyDoUkrycia.forEach(el => {
+            el.style.display = 'none';
+        });
+
+        const canvas = await html2canvas(element, {
+            scale: 2,
+            backgroundColor: '#ffffff',
+            useCORS: true
+        });
+
+        const link = document.createElement('a');
+        link.download = nazwaPliku;
+        link.href = canvas.toDataURL('image/jpeg', 0.95);
+        link.click();
+    }
+    catch (error) {
+        console.error('Błąd podczas zapisywania JPG:', error);
+        alert('Nie udało się zapisać obrazu.');
+    }
+    finally {
+        // Przywróć widoczność elementów
+        poprzedniaWidocznosc.forEach(item => {
+            item.element.style.display = item.display;
+        });
+    }
+}
+
