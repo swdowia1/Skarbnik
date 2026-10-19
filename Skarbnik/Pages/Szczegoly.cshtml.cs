@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Skarbnik.DB;
+using Skarbnik.Extensions;
 
 namespace Skarbnik.Pages
 {
@@ -28,9 +30,11 @@ namespace Skarbnik.Pages
 
             return RedirectToPage(new { id });
         }
-
+        
         public async Task<IActionResult> OnPostNiezaplaconeAsync(int id)
         {
+            if(!User.IsLoggedIn())
+    return RedirectToPage("/Login");
             var przypisanie = await _context.UczenWydatki
                 .FirstOrDefaultAsync(uw => uw.Id == id);
 
