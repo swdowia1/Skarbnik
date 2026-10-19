@@ -1,0 +1,231 @@
+﻿@page
+@model Skarbnik.Pages.LoginModel
+<div class="login-page">
+
+    <div class="login-card shadow-lg">
+
+        <div class="text-center mb-4">
+
+            <div class="logo-circle">
+                <i class="bi bi-wallet2"></i>
+            </div>
+
+            <h2 class="mt-3 mb-1">Budżet Domowy</h2>
+
+            <p class="text-muted">
+                Zaloguj się do swojego konta
+            </p>
+
+        </div>
+
+        <form method="post">
+
+            <div class="mb-3">
+
+                <label asp-for="Username" class="form-label"></label>
+
+                <div class="input-group">
+
+                    <span class="input-group-text">
+                        <i class="bi bi-person"></i>
+                    </span>
+
+                    <input asp-for="Username"
+                           class="form-control"
+                           placeholder="Wpisz login">
+
+                </div>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label asp-for="Password" class="form-label"></label>
+
+                <div class="input-group">
+
+                    <span class="input-group-text">
+                        <i class="bi bi-lock"></i>
+                    </span>
+
+                    <input asp-for="Password"
+                           id="password"
+                           type="password"
+                           class="form-control"
+                           placeholder="Wpisz hasło">
+
+                    <button class="btn btn-outline-secondary"
+                            type="button"
+                            id="togglePassword">
+
+                        <i class="bi bi-eye"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div class="form-check">
+
+                    <input class="form-check-input"
+                           type="checkbox"
+                           id="showPassword">
+
+                    <label class="form-check-label"
+                           for="showPassword">
+
+                        Pokaż hasło
+
+                    </label>
+
+                </div>
+
+                <a href="#" class="small text-decoration-none">
+                    Nie pamiętasz?
+                </a>
+
+            </div>
+
+            <button class="btn btn-login w-100">
+
+                <i class="bi bi-box-arrow-in-right"></i>
+
+                Zaloguj się
+
+            </button>
+
+        </form>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger mt-4 mb-0">
+
+                <i class="bi bi-exclamation-triangle-fill"></i>
+
+                @Model.ErrorMessage
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+<script>
+
+    const password=document.getElementById("password");
+    const checkbox=document.getElementById("showPassword");
+    const button=document.getElementById("togglePassword");
+    const icon=button.querySelector("i");
+
+    function updatePassword(){
+
+        password.type=checkbox.checked?"text":"password";
+
+        icon.className=checkbox.checked
+            ?"bi bi-eye-slash"
+            :"bi bi-eye";
+    }
+
+    checkbox.addEventListener("change",updatePassword);
+
+    button.addEventListener("click",()=>{
+
+        checkbox.checked=!checkbox.checked;
+
+        updatePassword();
+
+    });
+
+</script>
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI',sans-serif;
+        background: linear-gradient(135deg,#eef2ff,#f8fbff);
+    }
+
+    .login-page {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 430px;
+        background: #fff;
+        border: none;
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 25px 60px rgba(0,0,0,.12);
+    }
+
+    .logo-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg,#6366F1,#8B5CF6);
+        color: white;
+        font-size: 34px;
+    }
+
+    h2 {
+        font-weight: 700;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        height: 52px;
+    }
+
+    .input-group-text {
+        border-radius: 12px 0 0 12px;
+        background: white;
+    }
+
+    .input-group .btn {
+        border-radius: 0 12px 12px 0;
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 .25rem rgba(99,102,241,.15);
+        border-color: #6366F1;
+    }
+
+    .btn-login {
+        height: 54px;
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(135deg,#6366F1,#8B5CF6);
+        color: white;
+        font-size: 17px;
+        font-weight: 600;
+        transition: .25s;
+    }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(99,102,241,.35);
+        }
+
+    .alert {
+        border-radius: 12px;
+    }
+
+    @@media(max - width:576px) {
+        .login-card {
+            padding: 28px;
+            border-radius: 18px;
+        }
+    }
+</style>

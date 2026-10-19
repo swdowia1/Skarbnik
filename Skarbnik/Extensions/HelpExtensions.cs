@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Security.Claims;
 
 namespace Skarbnik.Extensions
 {
@@ -22,6 +23,10 @@ namespace Skarbnik.Extensions
             return TimeZoneInfo.ConvertTimeFromUtc(
                 DateTime.SpecifyKind(utcDateTime, DateTimeKind.Utc),
                 warsawTimeZone);
+        }
+        public static bool IsLoggedIn(this ClaimsPrincipal user)
+        {
+            return user.Identity?.IsAuthenticated == true;
         }
         public static string ToTimeString(this DateTime dateTime)
         {

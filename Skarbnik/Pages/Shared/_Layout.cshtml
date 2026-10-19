@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Skarbnik.Extensions
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -23,15 +24,43 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                   
                     <ul class="navbar-nav flex-grow-1">
-                       @*  <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Start</a>
-                        </li> *@
-                       
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/DodajWydatek">Dodaj Wydatek</a>
-                        </li>
+
+                        @if ((User.IsLoggedIn()))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark"
+                                   asp-area=""
+                                   asp-page="/DodajWydatek">
+                                    <i class="bi bi-plus-circle"></i>
+                                    Dodaj wydatek
+                                </a>
+                            </li>
+
+                            <li class="nav-item ms-sm-auto">
+                                <form method="post" asp-page="/Logout">
+                                    <button type="submit" class="nav-link text-dark">
+                                        <i class="bi bi-box-arrow-right"></i>
+                                        Wyloguj (@User.Identity.Name)
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item ms-sm-auto">
+                                <a class="nav-link text-dark"
+                                   asp-area=""
+                                   asp-page="/Login">
+                                    <i class="bi bi-box-arrow-in-right"></i>
+                                    Zaloguj się
+                                </a>
+                            </li>
+                        }
+
                     </ul>
+                  
                 </div>
             </div>
         </nav>

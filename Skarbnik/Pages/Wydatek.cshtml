@@ -261,7 +261,7 @@
 
                                 <td>
                                     <button type="button"
-                                            onclick="zmianastatus('@uczen.UczenId')"
+                                            onclick="@(User.IsLoggedIn() ? $"zmianastatus('{uczen.UczenId}')" : "")"
                                             class="btn btn-sm rounded-pill px-3
                                                     @(uczen.StanPlatnosc == StanPlatnosc.Zaplacono
                                                                                             ? "btn-success"

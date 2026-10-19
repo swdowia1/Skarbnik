@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Skarbnik.DB;
@@ -21,6 +23,17 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedCultures = new[] { cultureInfo };
     options.SupportedUICultures = new[] { cultureInfo };
 });
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login";
+        options.AccessDeniedPath = "/Login";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+    });
+
+builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,9 +49,18 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapRazorPages();
 app.MapControllers(); // <<< to dodaj
+//app.MapGet("/logout", async (HttpContext context) =>
+//{
+//    await context.SignOutAsync(
+//        CookieAuthenticationDefaults.AuthenticationScheme);
 
+//    context.Response.Redirect("/login");
+//});
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Public}/{action=login}");
 app.Run();
