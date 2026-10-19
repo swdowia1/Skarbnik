@@ -1,16 +1,56 @@
 ﻿@page "{id:int}"
 @model Skarbnik.Pages.UczenWydatkiModel
 @using Skarbnik.Extensions
+@using System.Text.Json
 
-<div class="container-fluid mt-4">
+@{
+    var zaplacone = Model.Wydatki
+        .Where(x => x.CzyZaplacono)
+        .ToList();
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    var niezaplacone = Model.Wydatki
+        .Where(x => !x.CzyZaplacono)
+        .ToList();
+
+    decimal sumaZaplacona = zaplacone.Sum(x => x.Wydatek.Kwota);
+    decimal sumaNiezaplacona = niezaplacone.Sum(x => x.Wydatek.Kwota);
+
+    int liczbaZaplaconych = zaplacone.Count;
+    int liczbaNiezaplaconych = niezaplacone.Count;
+    int liczbaNieprzypisanych = Model.WydatkiNieprzypisane.Count;
+
+    var nazwyWydatkow = Model.Wydatki
+        .Select(x => x.Wydatek.Nazwa)
+        .ToList();
+
+    var kwotyWydatkow = Model.Wydatki
+        .Select(x => x.Wydatek.Kwota)
+        .ToList();
+
+    var statusyWydatkow = Model.Wydatki
+        .Select(x => x.CzyZaplacono)
+        .ToList();
+
+    var liczbyStatusow = new[]
+    {
+        liczbaZaplaconych,
+        liczbaNiezaplaconych,
+        liczbaNieprzypisanych
+    };
+}
+
+<div class="container-fluid py-4">
+
+    <!-- NAGŁÓWEK -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
-            <h1 class="mb-1">
-                <i class="bi bi-person-lines-fill me-2"></i>
+            <h1 class="h3 mb-1">
+                <i class="bi bi-person-circle me-2 text-primary"></i>
                 @Model.UczenDane.Nazwisko
             </h1>
-            <div class="text-muted">Wydatki i status płatności ucznia</div>
+            <div class="text-muted">
+                Podsumowanie wydatków i statusów płatności
+            </div>
         </div>
 
         <a asp-page="/Index" class="btn btn-outline-secondary">
@@ -19,60 +59,138 @@
         </a>
     </div>
 
+    <!-- KARTY PODSUMOWANIA -->
     <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <div class="text-muted">Suma przypisanych wydatków</div>
-                    <div class="fs-3 fw-bold">
-                        @Model.SumaWszystkich.ToPln()
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted small mb-2">
+                                Łączna kwota
+                            </div>
+                            <div class="fs-4 fw-bold">
+                                @Model.SumaWszystkich.ToPln()
+                            </div>
+                            <div class="small text-muted mt-1">
+                                Przypisane wydatki
+                            </div>
+                        </div>
+                        <div class="rounded-3 bg-primary-subtle text-primary p-3">
+                            <i class="bi bi-wallet2 fs-4"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <div class="text-muted">Pozostało do zapłaty</div>
-                    <div class="fs-3 fw-bold text-danger">
-                        @Model.SumaNiezaplaconych.ToPln()
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted small mb-2">
+                                Zapłacono
+                            </div>
+                            <div class="fs-4 fw-bold text-success">
+                                @sumaZaplacona.ToPln()
+                            </div>
+                            <div class="small text-muted mt-1">
+                                @liczbaZaplaconych płatności
+                            </div>
+                        </div>
+                        <div class="rounded-3 bg-success-subtle text-success p-3">
+                            <i class="bi bi-check-circle fs-4"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <div class="text-muted">Liczba przypisanych wydatków</div>
-                    <div class="fs-3 fw-bold">@Model.Wydatki.Count</div>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted small mb-2">
+                                Do zapłaty
+                            </div>
+                            <div class="fs-4 fw-bold text-danger">
+                                @sumaNiezaplacona.ToPln()
+                            </div>
+                            <div class="small text-muted mt-1">
+                                @liczbaNiezaplaconych zaległości
+                            </div>
+                        </div>
+                        <div class="rounded-3 bg-danger-subtle text-danger p-3">
+                            <i class="bi bi-exclamation-circle fs-4"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted small mb-2">
+                                Nieprzypisane
+                            </div>
+                            <div class="fs-4 fw-bold text-warning">
+                                @liczbaNieprzypisanych
+                            </div>
+                            <div class="small text-muted mt-1">
+                                Dostępne wydatki
+                            </div>
+                        </div>
+                        <div class="rounded-3 bg-warning-subtle text-warning p-3">
+                            <i class="bi bi-receipt fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-light fw-bold">
-            Lista wydatków
+ 
+
+    <!-- LISTA WYDATKÓW -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-body py-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-check me-2 text-primary"></i>
+                    Lista przypisanych wydatków
+                </h5>
+
+                <span class="badge text-bg-secondary">
+                    @Model.Wydatki.Count pozycji
+                </span>
+            </div>
         </div>
 
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead>
+                <thead class="table-light">
                     <tr>
                         <th>Wydatek</th>
                         <th class="text-end">Kwota</th>
                         <th>Status</th>
                         <th>Data zapłaty</th>
-                       <th></th>
+                        <th class="text-center">Akcje</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @if (!Model.Wydatki.Any())
                     {
                         <tr>
-                            <td colspan="5" class="text-center text-muted py-4">
+                            <td colspan="5" class="text-center text-muted py-5">
+                                <i class="bi bi-inbox fs-2 d-block mb-2"></i>
                                 Brak przypisanych wydatków.
                             </td>
                         </tr>
@@ -83,7 +201,6 @@
                         {
                             <tr>
                                 <td class="fw-semibold">
-                                   
                                     <a asp-page="/Wydatek"
                                        asp-route-id="@pozycja.Wydatek.Id"
                                        class="text-decoration-none">
@@ -91,45 +208,45 @@
                                     </a>
                                 </td>
 
-                                <td class="text-end text-nowrap">
+                                <td class="text-end text-nowrap fw-semibold">
                                     @pozycja.Wydatek.Kwota.ToPln()
                                 </td>
 
-                                <td class="hand" onclick="zmianastatus('@pozycja.Wydatek.Id')">
-                                    @if (pozycja.CzyZaplacono)
-                                    {
-                                        <span class="badge rounded-pill px-3 py-2"
-                                              style="background-color: #198754; color: #fff; font-size: 0.85rem;">
+                                <td>
+                                    <button type="button"
+                                            onclick="zmianastatus('@pozycja.Wydatek.Id')"
+                                            class="btn btn-sm @(pozycja.CzyZaplacono ? "btn-success" : "btn-outline-danger") rounded-pill px-3">
+                                        @if (pozycja.CzyZaplacono)
+                                        {
                                             <i class="bi bi-check-circle-fill me-1"></i>
-                                            Zapłacono
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge rounded-pill px-3 py-2"
-                                              style="background-color: #dc3545; color: #fff; font-size: 0.85rem;">
+                                            <text>Zapłacono</text>
+                                        }
+                                        else
+                                        {
                                             <i class="bi bi-exclamation-circle-fill me-1"></i>
-                                            Do zapłaty
-                                        </span>
-                                    }
+                                            <text>Do zapłaty</text>
+                                        }
+                                    </button>
                                 </td>
 
                                 <td class="text-nowrap">
-                                    @(pozycja.DataZaplaty?.ToTimeFull()?? "—")
+                                    @(pozycja.DataZaplaty?.ToTimeFull() ?? "—")
                                 </td>
+
                                 <td class="text-center">
-                                    <button type="button" onclick="usun('@pozycja.WydatekId','@pozycja.Wydatek.Nazwa')"
+                                    <button type="button"
+                                            onclick="usun('@pozycja.WydatekId', @Html.Raw(JsonSerializer.Serialize(pozycja.Wydatek.Nazwa)))"
                                             class="btn btn-sm btn-outline-danger usun-przydzial"
                                             title="Usuń przypisanie"
                                             aria-label="Usuń przypisanie">
                                         <i class="bi bi-trash3"></i>
                                     </button>
                                 </td>
-                              
                             </tr>
                         }
                     }
                 </tbody>
+
                 @if (Model.Wydatki.Any())
                 {
                     <tfoot class="table-light fw-bold">
@@ -143,46 +260,333 @@
                     </tfoot>
                 }
             </table>
-            @if (Model.WydatkiNieprzypisane.Any())
-            {
-                <div class="card border-0 shadow-sm mt-4">
-                    <div class="card-header bg-warning-subtle py-3">
-                        <h5 class="mb-0">
-                            <i class="bi bi-exclamation-circle me-2"></i>
-                            Wydatki nieprzypisane uczniowi
-                        </h5>
-                        <small class="text-muted">
-                            Wybierz wydatek, aby przypisać go temu uczniowi.
-                        </small>
-                    </div>
-
-                    <div class="list-group list-group-flush">
-                        @foreach (var nazwa in Model.WydatkiNieprzypisane)
-                        {
-                            <div class="list-group-item d-flex justify-content-between align-items-center gap-3 py-3">
-                                <div class="d-flex align-items-center gap-2">
-                                    <i class="bi bi-receipt text-warning fs-5"></i>
-                                    <span class="fw-semibold">@nazwa.Name</span>
-                                    <button type="submit" class="btn btn-sm btn-outline-primary" onclick="dodaj('@nazwa.Id')">
-                                        <i class="bi bi-plus-circle me-1"></i>
-                                        Przypisz uczniowi
-                                    </button>
-                                </div>
-
-                                <span class="badge text-bg-warning">Nieprzypisany</span>
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
         </div>
     </div>
+
+    <!-- WYDATKI NIEPRZYPISANE -->
+    @if (Model.WydatkiNieprzypisane.Any())
+    {
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-warning-subtle py-3">
+                <h5 class="mb-1">
+                    <i class="bi bi-receipt me-2"></i>
+                    Wydatki nieprzypisane uczniowi
+                </h5>
+                <small class="text-muted">
+                    Wybierz wydatek, aby przypisać go temu uczniowi.
+                </small>
+            </div>
+
+            <div class="list-group list-group-flush">
+                @foreach (var nazwa in Model.WydatkiNieprzypisane)
+                {
+                    <div class="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-3 py-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-receipt text-warning fs-5"></i>
+                            <span class="fw-semibold">@nazwa.Name</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge text-bg-warning">
+                                Nieprzypisany
+                            </span>
+
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    onclick="dodaj('@nazwa.Id')">
+                                <i class="bi bi-plus-circle me-1"></i>
+                                Przypisz uczniowi
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- WYKRESY -->
+    <div class="row g-3 mb-4">
+
+        <!-- WYKRES STATUSÓW -->
+        <div class="col-12 col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-pie-chart me-2 text-primary"></i>
+                        Status płatności
+                    </h5>
+                    <p class="text-muted small">
+                        Liczba wydatków w poszczególnych statusach
+                    </p>
+
+                    <div class="chart-container chart-doughnut">
+                        <canvas id="wykresStatusow"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WYKRES KWOT -->
+        <div class="col-12 col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-bar-chart-line me-2 text-primary"></i>
+                        Rozliczenie kwot
+                    </h5>
+                    <p class="text-muted small">
+                        Porównanie kwot zapłaconych i pozostałych do zapłaty
+                    </p>
+
+                    <div class="chart-container chart-amounts">
+                        <canvas id="wykresKwot"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WYDATKI UCZNIA -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-graph-up me-2 text-primary"></i>
+                        Wydatki ucznia
+                    </h5>
+                    <p class="text-muted small">
+                        Zielony — zapłacono, czerwony — do zapłaty.
+                        Najedź na słupek, aby zobaczyć szczegóły.
+                    </p>
+
+                    @if (Model.Wydatki.Any())
+                    {
+                        <div class="chart-container chart-expenses"
+                             style="height: @(Math.Max(260, Model.Wydatki.Count * 42))px;">
+                            <canvas id="wykresWydatkow"></canvas>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-bar-chart fs-1 d-block mb-2"></i>
+                            Brak przypisanych wydatków do wyświetlenia.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
+
+<style>
+    .chart-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .chart-doughnut {
+        height: 300px;
+    }
+
+    .chart-amounts {
+        height: 300px;
+    }
+
+    .chart-expenses {
+        min-height: 260px;
+    }
+
+    .card {
+        border-radius: 0.75rem;
+    }
+
+    .table th {
+        white-space: nowrap;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-     const uczenId = @Model.UczenId;
-     //[HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/usun")]
-     function usun(wydatekId, wydatekNazwa) {
-           showGlobalConfirmModal(function () {
+    const uczenId = @Model.UczenId;
+
+    const liczbaZaplaconych = @liczbaZaplaconych;
+    const liczbaNiezaplaconych = @liczbaNiezaplaconych;
+    const liczbaNieprzypisanych = @liczbaNieprzypisanych;
+
+    const sumaZaplacona = @Html.Raw(JsonSerializer.Serialize(sumaZaplacona));
+    const sumaNiezaplacona = @Html.Raw(JsonSerializer.Serialize(sumaNiezaplacona));
+
+    const nazwyWydatkow = @Html.Raw(JsonSerializer.Serialize(nazwyWydatkow));
+    const kwotyWydatkow = @Html.Raw(JsonSerializer.Serialize(kwotyWydatkow));
+    const statusyWydatkow = @Html.Raw(JsonSerializer.Serialize(statusyWydatkow));
+
+    const kolorZielony = "#198754";
+    const kolorCzerwony = "#dc3545";
+    const kolorZolty = "#ffc107";
+
+    const formatujPLN = wartosc =>
+        Number(wartosc).toLocaleString("pl-PL", {
+            style: "currency",
+            currency: "PLN"
+        });
+
+    Chart.defaults.font.family = "Arial, sans-serif";
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+
+    // 1. STATUS PŁATNOŚCI
+    new Chart(document.getElementById("wykresStatusow"), {
+        type: "doughnut",
+        data: {
+            labels: [
+                "Zapłacone",
+                "Do zapłaty",
+                "Nieprzypisane"
+            ],
+            datasets: [{
+                data: [
+                    liczbaZaplaconych,
+                    liczbaNiezaplaconych,
+                    liczbaNieprzypisanych
+                ],
+                backgroundColor: [
+                    kolorZielony,
+                    kolorCzerwony,
+                    kolorZolty
+                ],
+                borderWidth: 3,
+                borderColor: "#ffffff",
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "65%",
+            plugins: {
+                legend: {
+                    position: "bottom"
+                },
+                tooltip: {
+                    callbacks: {
+                        label: context =>
+                            `${context.label}: ${context.raw}`
+                    }
+                }
+            }
+        }
+    });
+
+    // 2. PORÓWNANIE KWOT
+    new Chart(document.getElementById("wykresKwot"), {
+        type: "bar",
+        data: {
+            labels: [
+                "Zapłacono",
+                "Pozostało do zapłaty"
+            ],
+            datasets: [{
+                label: "Kwota",
+                data: [
+                    sumaZaplacona,
+                    sumaNiezaplacona
+                ],
+                backgroundColor: [
+                    kolorZielony,
+                    kolorCzerwony
+                ],
+                borderRadius: 8,
+                maxBarThickness: 65
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: "y",
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value =>
+                            Number(value).toLocaleString("pl-PL") + " zł"
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: context => formatujPLN(context.raw)
+                    }
+                }
+            }
+        }
+    });
+
+    // 3. WYDATKI UCZNIA
+    const wykresWydatkowElement =
+        document.getElementById("wykresWydatkow");
+
+    if (wykresWydatkowElement && nazwyWydatkow.length > 0) {
+        new Chart(wykresWydatkowElement, {
+            type: "bar",
+            data: {
+                labels: nazwyWydatkow,
+                datasets: [{
+                    label: "Kwota",
+                    data: kwotyWydatkow,
+                    backgroundColor: statusyWydatkow.map(
+                        czyZaplacono =>
+                            czyZaplacono ? kolorZielony : kolorCzerwony
+                    ),
+                    borderRadius: 5,
+                    maxBarThickness: 28
+                }]
+            },
+            options: {
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value =>
+                                Number(value).toLocaleString("pl-PL") + " zł"
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            autoSkip: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: context => {
+                                const status = statusyWydatkow[context.dataIndex]
+                                    ? "Zapłacono"
+                                    : "Do zapłaty";
+
+                                return `${formatujPLN(context.raw)} — ${status}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // USUWANIE PRZYPISANIA
+    function usun(wydatekId, wydatekNazwa) {
+        showGlobalConfirmModal(function () {
             postjson(
                 `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/usun`,
                 {},
@@ -198,11 +602,11 @@
                 }
             );
         }, `Czy na pewno chcesz usunąć przypisanie wydatku "${wydatekNazwa}" dla tego ucznia?`);
-        
     }
+
+    // PRZYPISANIE WYDATKU
     function dodaj(wydatekId) {
-      // alert("Funkcja dodaj wywołana dla wydatku o ID: " + wydatekId + " i ucznia o ID: " + uczenId);
-       postjson(
+        postjson(
             `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
             {},
             function (wynik) {
@@ -217,7 +621,9 @@
             }
         );
     }
-     function zmianastatus(wydatekId) {
+
+    // ZMIANA STATUSU PŁATNOŚCI
+    function zmianastatus(wydatekId) {
         postjson(
             `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
             {},
