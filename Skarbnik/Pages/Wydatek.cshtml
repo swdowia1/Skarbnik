@@ -1,71 +1,215 @@
 ﻿@page "{id:int}"
 @using Skarbnik.Enums
 @using Skarbnik.Extensions
+@using System.Text.Json
+@using System.Globalization
 
 @model Skarbnik.Pages.WydatekModel
 
 @{
     ViewData["Title"] = "Szczegóły wydatku";
 
-   
+    var uczniowie = Model.Uczniowie;
+
+    int liczbaZaplaconych = uczniowie
+        .Count(x => x.StanPlatnosc == StanPlatnosc.Zaplacono);
+
+    int liczbaDoZaplaty = uczniowie
+        .Count(x => x.StanPlatnosc == StanPlatnosc.DoZaplaty);
+
+    int liczbaNieprzydzielonych = uczniowie
+        .Count(x => x.StanPlatnosc == StanPlatnosc.Brak);
+
+    decimal sumaZaplacona =
+        liczbaZaplaconych * Model.WydatekDane.Kwota;
+
+    decimal sumaDoZaplaty =
+        liczbaDoZaplaty * Model.WydatekDane.Kwota;
+
+    decimal sumaPrzypisana =
+        sumaZaplacona + sumaDoZaplaty;
+
+    var nazwyUczniow = uczniowie
+        .Select(x => x.Nazwisko)
+        .ToList();
+
+    var kwotyUczniow = uczniowie
+        .Select(x => x.StanPlatnosc == StanPlatnosc.Brak
+            ? 0m
+            : Model.WydatekDane.Kwota)
+        .ToList();
+
+    var statusyUczniow = uczniowie
+        .Select(x => x.StanPlatnosc.ToString())
+        .ToList();
 }
 
 <div id="glowny" class="container-fluid py-4">
 
-    <!-- Nagłówek wydatku -->
+    <!-- NAGŁÓWEK -->
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
             <div class="text-muted small mb-1">
                 <i class="bi bi-receipt me-1"></i>
-                SZCZEGÓŁY WYDATKU
+                SKARBNIK / SZCZEGÓŁY WYDATKU
             </div>
 
-            <h2 class="fw-bold mb-1">@Model.WydatekDane.Nazwa</h2>
+            <h1 class="h3 fw-bold mb-2">
+                @Model.WydatekDane.Nazwa
+            </h1>
 
             <div class="text-muted">
-                Kwota przypadająca na ucznia:
+                Kwota na ucznia:
                 <span class="fw-bold text-dark">
                     @Model.WydatekDane.Kwota.ToPln()
                 </span>
             </div>
         </div>
 
-        <a id="aPrev" asp-page="/Index"
-           class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i>
-            Powrót do podsumowania
-        </a>
-        <a id="aAdd" asp-page="/DodajWydatek"
-           asp-route-id="@Model.WydatekDane.Id"
-           class="btn btn-outline-primary">
-            <i class="bi bi-pencil-square me-1"></i>
-            Edytuj wydatek
-        </a>
-        <button type="button" id="btnUsun" onclick="usunWydatek()"
-                class="btn btn-sm btn-outline-danger usun-przydzial"
-                title="Usuń przypisanie"
-                aria-label="Usuń przypisanie">
-            Usuń wydatek
-        </button>
-        <button id="btnZapisz" type="button"
-                class="btn btn-primary"
-                onclick="zapiszElementJakoJpg2('glowny', 'wydatek.jpg',['btnZapisz', 'btnUsun', 'aPrev','aAdd'])">
-            Zapisz jako JPG
-        </button>
+        <div class="d-flex flex-wrap gap-2">
+            <a id="aPrev"
+               asp-page="/Index"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>
+                Powrót
+            </a>
+
+            <a id="aAdd"
+               asp-page="/DodajWydatek"
+               asp-route-id="@Model.WydatekDane.Id"
+               class="btn btn-outline-primary">
+                <i class="bi bi-pencil-square me-1"></i>
+                Edytuj
+            </a>
+
+            <button type="button"
+                    id="btnUsun"
+                    onclick="usunWydatek()"
+                    class="btn btn-outline-danger">
+                <i class="bi bi-trash3 me-1"></i>
+                Usuń wydatek
+            </button>
+
+            <button id="btnZapisz"
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="zapiszElementJakoJpg2('glowny', 'wydatek.jpg', ['btnZapisz', 'btnUsun', 'aPrev', 'aAdd'])">
+                <i class="bi bi-image me-1"></i>
+                Zapisz jako JPG
+            </button>
+        </div>
     </div>
 
-   
-    <!-- Lista uczniów -->
+    <!-- KARTY PODSUMOWANIA -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted small mb-2">
+                                Kwota wydatku
+                            </div>
+                            <div class="fs-4 fw-bold">
+                                @Model.WydatekDane.Kwota.ToPln()
+                            </div>
+                            <div class="small text-muted mt-1">
+                                Na jednego ucznia
+                            </div>
+                        </div>
+                        <div class="rounded-3 bg-primary-subtle text-primary p-3">
+                            <i class="bi bi-receipt fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted small mb-2">
+                                Zapłacono
+                            </div>
+                            <div class="fs-4 fw-bold text-success">
+                                @sumaZaplacona.ToPln()
+                            </div>
+                            <div class="small text-muted mt-1">
+                                @liczbaZaplaconych uczniów
+                            </div>
+                        </div>
+                        <div class="rounded-3 bg-success-subtle text-success p-3">
+                            <i class="bi bi-check-circle fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted small mb-2">
+                                Do zapłaty
+                            </div>
+                            <div class="fs-4 fw-bold text-danger">
+                                @sumaDoZaplaty.ToPln()
+                            </div>
+                            <div class="small text-muted mt-1">
+                                @liczbaDoZaplaty uczniów
+                            </div>
+                        </div>
+                        <div class="rounded-3 bg-danger-subtle text-danger p-3">
+                            <i class="bi bi-clock-history fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted small mb-2">
+                                Nieprzydzieleni
+                            </div>
+                            <div class="fs-4 fw-bold text-warning">
+                                @liczbaNieprzydzielonych
+                            </div>
+                            <div class="small text-muted mt-1">
+                                Uczniowie bez przypisania
+                            </div>
+                        </div>
+                        <div class="rounded-3 bg-warning-subtle text-warning p-3">
+                            <i class="bi bi-person-plus fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+  
+
+    <!-- LISTA UCZNIÓW -->
     <div class="card border-0 shadow-sm">
 
-        <div class="card-header bg-white py-3">
+        <div class="card-header bg-body py-3">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <h5 class="fw-bold mb-0">
-                    <i class="bi bi-people me-2"></i>
+                    <i class="bi bi-list-check me-2 text-primary"></i>
                     Lista uczniów
                 </h5>
 
-                <span class="badge bg-light text-dark border">
+                <span class="badge text-bg-secondary">
                     Razem: @Model.Uczniowie.Count
                 </span>
             </div>
@@ -73,22 +217,21 @@
 
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-
                 <thead class="table-light">
                     <tr>
                         <th class="ps-4" style="width: 60px;">Lp.</th>
                         <th>Uczeń</th>
                         <th>Status płatności</th>
                         <th>Data zapłaty</th>
-                              <th class="text-center">Akcja</th>
+                        <th class="text-center">Akcja</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    @if (!Model.Uczniowie.Any())
+                    @if (!uczniowie.Any())
                     {
                         <tr>
-                            <td colspan="6" class="text-center py-5">
+                            <td colspan="5" class="text-center py-5">
                                 <i class="bi bi-people fs-1 text-muted"></i>
                                 <div class="fw-semibold mt-2">
                                     Brak uczniów
@@ -100,7 +243,7 @@
                     {
                         var lp = 0;
 
-                        @foreach (var uczen in Model.Uczniowie)
+                        @foreach (var uczen in uczniowie)
                         {
                             lp++;
 
@@ -116,47 +259,48 @@
                                     </a>
                                 </td>
 
-                                <td class="status-platnosci hand" onclick="zmianastatus('@uczen.UczenId')">
-                                    @switch (uczen.StanPlatnosc)
-                                    {
-                                        case StanPlatnosc.Brak:
-                                            <span class="badge rounded-pill bg-warning text-dark px-3 py-2">
+                                <td>
+                                    <button type="button"
+                                            onclick="zmianastatus('@uczen.UczenId')"
+                                            class="btn btn-sm rounded-pill px-3
+                                                    @(uczen.StanPlatnosc == StanPlatnosc.Zaplacono
+                                                                                            ? "btn-success"
+                                                                                            : uczen.StanPlatnosc == StanPlatnosc.DoZaplaty
+                                                                                                ? "btn-outline-danger"
+                                                                                                : "btn-outline-warning")">
+
+                                @switch (uczen.StanPlatnosc)
+                                        {
+                                            case StanPlatnosc.Brak:
                                                 <i class="bi bi-person-plus me-1"></i>
-                                                Nie przydzielono
-                                            </span>
-                                            break;
+                                                <text>Nie przydzielono</text>
+                                                break;
 
-                                        case StanPlatnosc.DoZaplaty:
-                                            <span class="badge rounded-pill bg-danger text-white px-3 py-2">
+                                            case StanPlatnosc.DoZaplaty:
                                                 <i class="bi bi-clock-history me-1"></i>
-                                                Do zapłaty
-                                            </span>
-                                            break;
+                                                <text>Do zapłaty</text>
+                                                break;
 
-                                        case StanPlatnosc.Zaplacono:
-                                            <span class="badge rounded-pill bg-success text-white px-3 py-2">
+                                            case StanPlatnosc.Zaplacono:
                                                 <i class="bi bi-check-circle-fill me-1"></i>
-                                                Zapłacono
-                                            </span>
-                                            break;
-                                    }
+                                                <text>Zapłacono</text>
+                                                break;
+                                        }
+                                    </button>
                                 </td>
 
-                                <td class="text-muted">
-                                    @(uczen.DataZaplaty?.ToTimeFull()?? "—")
+                                <td class="text-muted text-nowrap">
+                                    @(uczen.DataZaplaty?.ToTimeFull() ?? "—")
                                 </td>
-
-                               
 
                                 <td class="text-center">
                                     @if (uczen.StanPlatnosc != StanPlatnosc.Brak)
-                                  
-                                   
                                     {
-                                        <button type="button" onclick="usun('@uczen.UczenId','@uczen.Nazwisko')"
-                                        class="btn btn-sm btn-outline-danger usun-przydzial"
-                                        title="Usuń przypisanie"
-                                        aria-label="Usuń przypisanie">
+                                        <button type="button"
+                                                onclick="usun('@uczen.UczenId', @Html.Raw(JsonSerializer.Serialize(uczen.Nazwisko)))"
+                                                class="btn btn-sm btn-outline-danger"
+                                                title="Usuń przypisanie"
+                                                aria-label="Usuń przypisanie">
                                             <i class="bi bi-trash3"></i>
                                         </button>
                                     }
@@ -166,22 +310,298 @@
                     }
                 </tbody>
 
+                <tfoot class="table-light">
+                    <tr>
+                        <td colspan="5" class="text-muted small py-3">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Uczeń nieprzydzielony nie ma przypisania do tego wydatku.
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
-        </div>
-
-        <div class="card-footer bg-white text-muted small py-3">
-            <i class="bi bi-info-circle me-1"></i>
-            Uczeń nieprzydzielony nie ma przypisania do tego wydatku.
         </div>
 
     </div>
 
+    <!-- WYKRESY -->
+    <div class="row g-3 mb-4">
+
+        <!-- STATUSY -->
+        <div class="col-12 col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-pie-chart me-2 text-primary"></i>
+                        Status płatności
+                    </h5>
+
+                    <p class="text-muted small">
+                        Podział uczniów według statusu
+                    </p>
+
+                    <div class="chart-container chart-doughnut">
+                        <canvas id="wykresStatusow"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KWOTY -->
+        <div class="col-12 col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-bar-chart-line me-2 text-primary"></i>
+                        Rozliczenie wydatku
+                    </h5>
+
+                    <p class="text-muted small">
+                        Łączna kwota zapłacona i pozostała do zapłaty
+                    </p>
+
+                    <div class="chart-container chart-amounts">
+                        <canvas id="wykresKwot"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
 </div>
+
+<style>
+    .chart-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .chart-doughnut {
+        height: 300px;
+    }
+
+    .chart-amounts {
+        height: 300px;
+    }
+
+    #glowny .card {
+        border-radius: 0.75rem;
+    }
+
+    #glowny .table th {
+        white-space: nowrap;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
     const wydatekId = @Model.WydatekDane.Id;
-    function usunWydatek()
-    {
-       showGlobalConfirmModal(function () {
+
+    const liczbaZaplaconych = @liczbaZaplaconych;
+    const liczbaDoZaplaty = @liczbaDoZaplaty;
+    const liczbaNieprzydzielonych = @liczbaNieprzydzielonych;
+
+    const kwotaNaUcznia = @Html.Raw(
+                JsonSerializer.Serialize(Model.WydatekDane.Kwota));
+
+    const sumaZaplacona = @Html.Raw(
+                JsonSerializer.Serialize(sumaZaplacona));
+
+    const sumaDoZaplaty = @Html.Raw(
+                JsonSerializer.Serialize(sumaDoZaplaty));
+
+    const nazwyUczniow = @Html.Raw(
+                JsonSerializer.Serialize(nazwyUczniow));
+
+    const kwotyUczniow = @Html.Raw(
+                JsonSerializer.Serialize(kwotyUczniow));
+
+    const statusyUczniow = @Html.Raw(
+                JsonSerializer.Serialize(statusyUczniow));
+
+    const kolorZielony = "#198754";
+    const kolorCzerwony = "#dc3545";
+    const kolorZolty = "#ffc107";
+
+    const formatujPLN = wartosc =>
+        Number(wartosc).toLocaleString("pl-PL", {
+            style: "currency",
+            currency: "PLN"
+        });
+
+    Chart.defaults.font.family = "Arial, sans-serif";
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+
+    // 1. STATUSY PŁATNOŚCI
+    new Chart(document.getElementById("wykresStatusow"), {
+        type: "doughnut",
+        data: {
+            labels: [
+                "Zapłacono",
+                "Do zapłaty",
+                "Nie przydzielono"
+            ],
+            datasets: [{
+                data: [
+                    liczbaZaplaconych,
+                    liczbaDoZaplaty,
+                    liczbaNieprzydzielonych
+                ],
+                backgroundColor: [
+                    kolorZielony,
+                    kolorCzerwony,
+                    kolorZolty
+                ],
+                borderColor: "#ffffff",
+                borderWidth: 3,
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "65%",
+            plugins: {
+                legend: {
+                    position: "bottom"
+                },
+                tooltip: {
+                    callbacks: {
+                        label: context =>
+                            `${context.label}: ${context.raw}`
+                    }
+                }
+            }
+        }
+    });
+
+    // 2. ROZLICZENIE KWOT
+    new Chart(document.getElementById("wykresKwot"), {
+        type: "bar",
+        data: {
+            labels: [
+                "Zapłacono",
+                "Pozostało do zapłaty"
+            ],
+            datasets: [{
+                label: "Kwota",
+                data: [
+                    sumaZaplacona,
+                    sumaDoZaplaty
+                ],
+                backgroundColor: [
+                    kolorZielony,
+                    kolorCzerwony
+                ],
+                borderRadius: 8,
+                maxBarThickness: 65
+            }]
+        },
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value =>
+                            Number(value).toLocaleString("pl-PL") + " zł"
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: context => formatujPLN(context.raw)
+                    }
+                }
+            }
+        }
+    });
+
+    // 3. STATUS KAŻDEGO UCZNIA
+    const wykresUczniowElement =
+        document.getElementById("wykresUczniow");
+
+    if (wykresUczniowElement && nazwyUczniow.length > 0) {
+        new Chart(wykresUczniowElement, {
+            type: "bar",
+            data: {
+                labels: nazwyUczniow,
+                datasets: [{
+                    label: "Kwota",
+                    data: kwotyUczniow,
+                    backgroundColor: statusyUczniow.map(status => {
+                        if (status === "Zaplacono") {
+                            return kolorZielony;
+                        }
+
+                        if (status === "DoZaplaty") {
+                            return kolorCzerwony;
+                        }
+
+                        return kolorZolty;
+                    }),
+                    borderRadius: 5,
+                    maxBarThickness: 28
+                }]
+            },
+            options: {
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        suggestedMax: kwotaNaUcznia,
+                        ticks: {
+                            callback: value =>
+                                Number(value).toLocaleString("pl-PL") + " zł"
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            autoSkip: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: context => {
+                                const status = statusyUczniow[context.dataIndex];
+
+                                let opis;
+
+                                if (status === "Zaplacono") {
+                                    opis = "Zapłacono";
+                                } else if (status === "DoZaplaty") {
+                                    opis = "Do zapłaty";
+                                } else {
+                                    opis = "Nie przydzielono";
+                                }
+
+                                return `${opis}: ${formatujPLN(context.raw)}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // USUWANIE CAŁEGO WYDATKU
+    function usunWydatek() {
+        showGlobalConfirmModal(function () {
             postjson(
                 `/api/baza/wydatek/${wydatekId}/usun`,
                 {},
@@ -196,8 +616,10 @@
                     console.error("Odpowiedź:", xhr.responseText);
                 }
             );
-        }, `Czy na pewno chcesz usunąć cały wydatek`);
+        }, "Czy na pewno chcesz usunąć cały wydatek?");
     }
+
+    // ZMIANA STATUSU PŁATNOŚCI
     function zmianastatus(uczenId) {
         postjson(
             `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
@@ -214,8 +636,9 @@
             }
         );
     }
-    
-       function usun(uczenId, nazwisko) {
+
+    // USUWANIE PRZYPISANIA UCZNIA
+    function usun(uczenId, nazwisko) {
         showGlobalConfirmModal(function () {
             postjson(
                 `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/usun`,
@@ -233,5 +656,4 @@
             );
         }, `Czy na pewno chcesz usunąć przypisanie wydatku dla ucznia ${nazwisko}?`);
     }
-
 </script>
