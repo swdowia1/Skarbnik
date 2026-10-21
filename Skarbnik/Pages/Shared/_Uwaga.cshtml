@@ -1,0 +1,11 @@
+﻿@model Skarbnik.VM.UwagaVM
+<div class="card border-warning shadow-sm mb-3">
+    <div class="card-header bg-warning-subtle fw-bold">
+        <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+        @Model.Header
+    </div>
+
+    <div class="card-body">
+        @Html.Raw(Model.Body)
+    </div>
+</div>

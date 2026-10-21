@@ -18,9 +18,40 @@ namespace Skarbnik
             _context = context;
         }
 
-       
 
- 
+        //dodawanie dlawszystkich uczniów do wydatku
+        // `/api/baza/wydatek/${wydatekId}/addall`,
+        [HttpPost("wydatek/{wydatekId:int}/addall")]
+        public async Task<IActionResult> DodajWszystkichUczniowDoWydatku(int wydatekId)
+        {
+            var uczniowie = await _context.Uczniowie.ToListAsync();
+            var przypisania = new List<UczenWydatek>();
+            foreach (var uczen in uczniowie)
+            {
+                var istniejePrzypisanie = await _context.UczenWydatki
+                    .AnyAsync(x => x.WydatekId == wydatekId && x.UczenId == uczen.Id);
+                if (!istniejePrzypisanie)
+                {
+                    przypisania.Add(new UczenWydatek
+                    {
+                        WydatekId = wydatekId,
+                        UczenId = uczen.Id,
+                        CzyZaplacono = false
+                    });
+                }
+            }
+            if (przypisania.Count > 0)
+            {
+                _context.UczenWydatki.AddRange(przypisania);
+                await _context.SaveChangesAsync();
+            }
+            return Ok(new
+            {
+                message = "Dodano wszystkich uczniów do wydatku.",
+                liczbaDodanych = przypisania.Count
+            });
+        }
+
         // Oznaczenie wpłaty jako zapłaconej
         [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/zaplacono")]
         public async Task<IActionResult> OznaczJakoZaplacono(

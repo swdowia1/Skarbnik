@@ -108,74 +108,19 @@
             </tfoot>
         </table>
     </div>
-    <div class="text-muted small mt-2"> <span class="text-danger fw-bold">Czerwony kolor</span> oznacza niezapłacony wydatek. „Brak” oznacza, że wydatek nie dotyczy ucznia. </div>
+    @await Html.PartialAsync("_Uwaga", new Skarbnik.VM.UwagaVM
+        {
+        Header = "Informacja",
+        Body = @"
+        <p>
+        <span class='text-danger fw-bold'>Czerwony kolor</span>
+        oznacza niezapłacony wydatek.
+        </p>
+        <p>
+        <span class='badge bg-secondary'>Brak</span>
+        oznacza, że wydatek nie dotyczy ucznia.
+        </p>
+       "
+        })
 </div>
-<!-- Legenda tabeli przestawnej -->
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-body py-3">
-        <div class="d-flex align-items-center gap-2 mb-3">
-            <i class="bi bi-info-circle-fill text-primary fs-5"></i>
-            <h5 class="mb-0">Jak czytać tabelę?</h5>
-        </div>
 
-        <div class="d-flex flex-wrap gap-3 gap-lg-4">
-
-            <div class="d-flex align-items-center gap-2">
-                <span class="d-inline-flex align-items-center justify-content-center rounded bg-success-subtle text-success"
-                      style="width: 36px; height: 36px;">
-                    <i class="bi bi-check-circle-fill fs-5"></i>
-                </span>
-                <div>
-                    <div class="fw-semibold">Zapłacono</div>
-                    <div class="small text-muted">Wpłata została odnotowana</div>
-                </div>
-            </div>
-
-            <div class="d-flex align-items-center gap-2">
-                <span class="d-inline-flex align-items-center justify-content-center rounded bg-danger-subtle text-danger"
-                      style="width: 36px; height: 36px;">
-                    <i class="bi bi-clock-history fs-5"></i>
-                </span>
-                <div>
-                    <div class="fw-semibold">Nie zapłacono</div>
-                    <div class="small text-muted">Kwota do uregulowania</div>
-                </div>
-            </div>
-
-        
-
-            <div class="d-flex align-items-center gap-2">
-                <span class="d-inline-flex align-items-center justify-content-center rounded border border-primary text-primary"
-                      style="width: 36px; height: 36px;">
-                    <i class="bi bi-plus-lg fs-5"></i>
-                </span>
-                <div>
-                    <div class="fw-semibold">Przypisz wydatek</div>
-                    <div class="small text-muted">Kliknij, aby przypisać wydatek uczniowi</div>
-                </div>
-            </div>
-
-        </div>
-
-        <hr class="my-3" />
-
-        <div class="d-flex flex-wrap gap-2 align-items-center small text-muted">
-            <i class="bi bi-lightbulb text-warning fs-5"></i>
-            <span>
-                Kliknij nazwę wydatku, aby zobaczyć szczegóły.
-                Kliknij kwotę w tabeli, aby przejść do szczegółów przypisania.
-                Kolumna <strong>Nie zapłacone</strong> pokazuje zaległości ucznia,
-                a ostatnie wiersze przedstawiają sumy dla całej klasy.
-            </span>
-        </div>
-    </div>
-</div>
-<script>
-    function testDelete() {
-      const studentId = 123;
-
-    showGlobalConfirmModal(function () {
-        console.log("Usuwanie ucznia o ID:", studentId);
-    }, "Czy na pewno chcesz usunąć tego ucznia?");
-    }
-</script>

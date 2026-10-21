@@ -67,28 +67,39 @@
         </div>
 
         <div class="d-flex flex-wrap gap-2">
-           
+            @if (User.IsLoggedIn())
+            {
+                <div>
 
-            <a id="aAdd"
-               asp-page="/DodajWydatek"
-               asp-route-id="@Model.WydatekDane.Id"
-               class="btn btn-outline-primary">
-                <i class="bi bi-pencil-square me-1"></i>
-                Edytuj
-            </a>
+                    <a id="aAdd"
+                       asp-page="/DodajWydatek"
+                       asp-route-id="@Model.WydatekDane.Id"
+                       class="btn btn-outline-primary">
+                        <i class="bi bi-pencil-square me-1"></i>
+                        Edytuj
+                    </a>
 
-            <button type="button"
-                    id="btnUsun"
-                    onclick="usunWydatek()"
-                    class="btn btn-outline-danger">
-                <i class="bi bi-trash3 me-1"></i>
-                Usuń wydatek
-            </button>
+                    <button type="button"
+                            id="btnUsun"
+                            onclick="usunWydatek()"
+                            class="btn btn-outline-danger">
+                        <i class="bi bi-trash3 me-1"></i>
+                        Usuń wydatek
+                    </button>
+                    <button type="button"
+                            id="btnAddAll"
+                            onclick="addAll()"
+                            class="btn btn-outline-danger">
+
+                        Dodaj dla wszystkich
+                    </button>
+                </div>
+            }
 
             <button id="btnZapisz"
                     type="button"
                     class="btn btn-primary"
-                    onclick="zapiszElementJakoJpg2('glowny', 'wydatek.jpg', ['btnZapisz', 'btnUsun', 'aPrev', 'aAdd'])">
+                    onclick="zapiszElementJakoJpg2('glowny', 'wydatek.jpg', ['btnZapisz', 'btnUsun', 'btnAddAll', 'aAdd'])">
                 <i class="bi bi-image me-1"></i>
                 Zapisz jako JPG
             </button>
@@ -192,7 +203,7 @@
 
     </div>
 
-  
+
 
     <!-- LISTA UCZNIÓW -->
     <div class="card border-0 shadow-sm">
@@ -258,11 +269,11 @@
                                     <button type="button"
                                             onclick="@(User.IsLoggedIn() ? $"zmianastatus('{uczen.UczenId}')" : "")"
                                             class="btn btn-sm rounded-pill px-3
-                                                    @(uczen.StanPlatnosc == StanPlatnosc.Zaplacono
-                                                                                            ? "btn-success"
-                                                                                            : uczen.StanPlatnosc == StanPlatnosc.DoZaplaty
-                                                                                                ? "btn-outline-danger"
-                                                                                                : "btn-outline-warning")">
+                                                            @(uczen.StanPlatnosc == StanPlatnosc.Zaplacono
+                                                                                                                                        ? "btn-success"
+                                                                                                                                        : uczen.StanPlatnosc == StanPlatnosc.DoZaplaty
+                                                                                                                                            ? "btn-outline-danger"
+                                                                                                                                            : "btn-outline-warning")">
 
                                 @switch (uczen.StanPlatnosc)
                                         {
@@ -292,7 +303,7 @@
                                     @if (uczen.StanPlatnosc != StanPlatnosc.Brak)
                                     {
                                         <button type="button"
-                                                onclick="usun('@uczen.UczenId', @Html.Raw(JsonSerializer.Serialize(uczen.Nazwisko)))"
+                                                onclick="usun('@uczen.UczenId','@uczen.Nazwisko')"
                                                 class="btn btn-sm btn-outline-danger"
                                                 title="Usuń przypisanie"
                                                 aria-label="Usuń przypisanie">
@@ -399,22 +410,22 @@
     const liczbaNieprzydzielonych = @liczbaNieprzydzielonych;
 
     const kwotaNaUcznia = @Html.Raw(
-                JsonSerializer.Serialize(Model.WydatekDane.Kwota));
+                                JsonSerializer.Serialize(Model.WydatekDane.Kwota));
 
     const sumaZaplacona = @Html.Raw(
-                JsonSerializer.Serialize(sumaZaplacona));
+                                JsonSerializer.Serialize(sumaZaplacona));
 
     const sumaDoZaplaty = @Html.Raw(
-                JsonSerializer.Serialize(sumaDoZaplaty));
+                                JsonSerializer.Serialize(sumaDoZaplaty));
 
     const nazwyUczniow = @Html.Raw(
-                JsonSerializer.Serialize(nazwyUczniow));
+                                JsonSerializer.Serialize(nazwyUczniow));
 
     const kwotyUczniow = @Html.Raw(
-                JsonSerializer.Serialize(kwotyUczniow));
+                                JsonSerializer.Serialize(kwotyUczniow));
 
     const statusyUczniow = @Html.Raw(
-                JsonSerializer.Serialize(statusyUczniow));
+                                JsonSerializer.Serialize(statusyUczniow));
 
     const kolorZielony = "#198754";
     const kolorCzerwony = "#dc3545";
@@ -631,9 +642,27 @@
             }
         );
     }
-
+    //dodawanie dla wszystki
+    function addAll() {
+        showGlobalConfirmModal(function () {
+            postjson(
+                `/api/baza/wydatek/${wydatekId}/addall`,
+                {},
+                function (wynik) {
+                    console.log("Sukces:", wynik.message);
+                    load();
+                },
+                function (xhr, status, error) {
+                    console.error("HTTP:", xhr.status);
+                    console.error("Status:", status);
+                    console.error("Błąd:", error);
+                    console.error("Odpowiedź:", xhr.responseText);
+                }
+            );
+        }, "Czy na pewno chcesz dodać przypisanie wydatku dla wszystkich uczniów?");
+    }
     // USUWANIE PRZYPISANIA UCZNIA
-    function usun(uczenId, nazwisko) {
+    function usun(uczenId,nazwisko) {
         showGlobalConfirmModal(function () {
             postjson(
                 `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/usun`,

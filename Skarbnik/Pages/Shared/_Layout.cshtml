@@ -39,10 +39,10 @@
                             </li>
 
                             <li class="nav-item ms-sm-auto">
-                                <form method="post" asp-page="/Logout">
-                                    <button type="submit" class="nav-link text-dark">
-                                        <i class="bi bi-box-arrow-right"></i>
-                                        Wyloguj (@User.Identity.Name)
+                                <form method="post" asp-page="/Logout" class="d-inline">
+                                    <button type="submit" class="btn btn-logout">
+                                        <i class="bi bi-box-arrow-right me-2"></i>
+                                        Wyloguj się (@User.Identity.Name)
                                     </button>
                                 </form>
                             </li>
