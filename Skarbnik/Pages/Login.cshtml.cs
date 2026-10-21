@@ -61,12 +61,18 @@ namespace Skarbnik.Pages
             //l.CountError = 0;
             //l.LastTimeLogin = DateTime.UtcNow;
             //await _context.SaveChangesAsync();
-            string password="sk"+DateTime.UtcNow.ToWarsawTime().ToString("yyyyMMdd");
-            if (Password != password)
+ string password="sk"+DateTime.UtcNow.ToWarsawTime().ToString("dd");           
+#if DEBUG
+            Console.WriteLine("tryb dewoleprski");
+#else
+
+
+             if (Password != password)
             {
                 ErrorMessage = "B³êdne has³o";
                 return Page();
             }
+#endif
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, "Administrator")
