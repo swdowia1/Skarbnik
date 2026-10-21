@@ -52,23 +52,26 @@
             </dl>
 
             <hr />
+            @if (User.IsLoggedIn())
+            {
 
-            <div class="d-flex flex-wrap gap-2">
 
-                @if (!przypisanie.CzyZaplacono)
-                {
-                    <form method="post"
-                          asp-page-handler="Zaplacono"
-                          asp-route-id="@przypisanie.Id">
-                        <button type="submit" class="btn btn-success">
-                            Oznacz jako zapłacone
-                        </button>
-                    </form>
-                }
-                else
-                {
-                    <form method="post"
-                          asp-page-handler="Niezaplacone"
+                <div class="d-flex flex-wrap gap-2">
+
+                    @if (!przypisanie.CzyZaplacono)
+                    {
+                        <form method="post"
+                        asp-page-handler="Zaplacono"
+                        asp-route-id="@przypisanie.Id">
+                            <button type="submit" class="btn btn-success">
+                                Oznacz jako zapłacone
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form method="post"
+                        asp-page-handler="Niezaplacone"
                           asp-route-id="@przypisanie.Id">
                         <button type="submit" class="btn btn-warning">
                             Ustaw jako niezapłacone
@@ -89,6 +92,8 @@
                 </a>
 
             </div>
+            }
+            <partial name="_LoginAdmin" />
         </div>
     </div>
 </div>

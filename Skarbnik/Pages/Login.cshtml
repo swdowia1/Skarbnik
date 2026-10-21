@@ -1,196 +1,145 @@
-﻿@page
+﻿
+@page
 @model Skarbnik.Pages.LoginModel
-<div class="login-page">
 
+<div class="login-page">
     <div class="login-card shadow-lg">
 
         <div class="text-center mb-4">
-
             <div class="logo-circle">
-                <i class="bi bi-wallet2"></i>
+                <i class="bi bi-shield-lock-fill"></i>
             </div>
 
-            <h2 class="mt-3 mb-1">Budżet Domowy</h2>
+            <h2 class="mt-3 mb-1">Skarbnik</h2>
 
             <p class="text-muted">
-                Zaloguj się do swojego konta
+                Panel administratora
             </p>
-
         </div>
 
         <form method="post">
-
-            <div class="mb-3">
-
-                <label asp-for="Username" class="form-label"></label>
-
-                <div class="input-group">
-
-                    <span class="input-group-text">
-                        <i class="bi bi-person"></i>
-                    </span>
-
-                    <input asp-for="Username"
-                           class="form-control"
-                           placeholder="Wpisz login">
-
-                </div>
-
-            </div>
-
-            <div class="mb-3">
-
-                <label asp-for="Password" class="form-label"></label>
+            <div class="mb-4">
+                <label asp-for="Password" class="form-label">
+                    Hasło administratora
+                </label>
 
                 <div class="input-group">
-
                     <span class="input-group-text">
-                        <i class="bi bi-lock"></i>
+                        <i class="bi bi-lock-fill"></i>
                     </span>
 
                     <input asp-for="Password"
                            id="password"
                            type="password"
                            class="form-control"
-                           placeholder="Wpisz hasło">
+                           placeholder="Wpisz hasło"
+                           autocomplete="current-password"
+                           autofocus />
 
                     <button class="btn btn-outline-secondary"
                             type="button"
-                            id="togglePassword">
-
+                            id="togglePassword"
+                            aria-label="Pokaż lub ukryj hasło">
                         <i class="bi bi-eye"></i>
-
                     </button>
-
                 </div>
 
+                <span asp-validation-for="Password"
+                      class="text-danger small"></span>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-
-                <div class="form-check">
-
-                    <input class="form-check-input"
-                           type="checkbox"
-                           id="showPassword">
-
-                    <label class="form-check-label"
-                           for="showPassword">
-
-                        Pokaż hasło
-
-                    </label>
-
-                </div>
-
-                <a href="#" class="small text-decoration-none">
-                    Nie pamiętasz?
-                </a>
-
-            </div>
-
-            <button class="btn btn-login w-100">
-
-                <i class="bi bi-box-arrow-in-right"></i>
-
-                Zaloguj się
-
+            <button type="submit" class="btn btn-login w-100">
+                <i class="bi bi-box-arrow-in-right me-2"></i>
+                Zaloguj jako administrator
             </button>
-
         </form>
 
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))
         {
-            <div class="alert alert-danger mt-4 mb-0">
-
-                <i class="bi bi-exclamation-triangle-fill"></i>
-
+            <div class="alert alert-danger mt-4 mb-0" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
                 @Model.ErrorMessage
-
             </div>
         }
 
-    </div>
+        <div class="text-center mt-4">
+            <a asp-page="/Index" class="back-link">
+                <i class="bi bi-arrow-left me-1"></i>
+                Wróć do strony głównej
+            </a>
+        </div>
 
+    </div>
 </div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const password = document.getElementById("password");
+        const button = document.getElementById("togglePassword");
+        const icon = button.querySelector("i");
 
-    const password=document.getElementById("password");
-    const checkbox=document.getElementById("showPassword");
-    const button=document.getElementById("togglePassword");
-    const icon=button.querySelector("i");
+        button.addEventListener("click", function () {
+            const show = password.type === "password";
 
-    function updatePassword(){
-
-        password.type=checkbox.checked?"text":"password";
-
-        icon.className=checkbox.checked
-            ?"bi bi-eye-slash"
-            :"bi bi-eye";
-    }
-
-    checkbox.addEventListener("change",updatePassword);
-
-    button.addEventListener("click",()=>{
-
-        checkbox.checked=!checkbox.checked;
-
-        updatePassword();
-
+            password.type = show ? "text" : "password";
+            icon.className = show ? "bi bi-eye-slash" : "bi bi-eye";
+        });
     });
-
 </script>
-<style>
-    body {
-        margin: 0;
-        font-family: 'Segoe UI',sans-serif;
-        background: linear-gradient(135deg,#eef2ff,#f8fbff);
-    }
 
+<style>
     .login-page {
-        min-height: 100vh;
+        min-height: 85vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 20px;
+        padding: 24px;
+        background: linear-gradient(135deg, #eef2ff, #f8fbff);
+        border-radius: 20px;
     }
 
     .login-card {
         width: 100%;
-        max-width: 430px;
-        background: #fff;
-        border: none;
-        border-radius: 24px;
+        max-width: 420px;
         padding: 40px;
-        box-shadow: 0 25px 60px rgba(0,0,0,.12);
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, .12);
     }
 
     .logo-circle {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
+        width: 76px;
+        height: 76px;
         margin: auto;
         display: flex;
         justify-content: center;
         align-items: center;
-        background: linear-gradient(135deg,#6366F1,#8B5CF6);
+        border-radius: 22px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
         color: white;
-        font-size: 34px;
+        font-size: 32px;
     }
 
-    h2 {
+    .login-card h2 {
         font-weight: 700;
+        color: #1e293b;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #334155;
     }
 
     .form-control {
-        border-radius: 12px;
         height: 52px;
+        min-width: 0;
+        border-radius: 0 12px 12px 0;
     }
 
     .input-group-text {
-        border-radius: 12px 0 0 12px;
+        padding: 0 16px;
         background: white;
+        border-radius: 12px 0 0 12px;
     }
 
     .input-group .btn {
@@ -198,33 +147,44 @@
     }
 
     .form-control:focus {
-        box-shadow: 0 0 0 .25rem rgba(99,102,241,.15);
-        border-color: #6366F1;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 .2rem rgba(99, 102, 241, .15);
     }
 
     .btn-login {
-        height: 54px;
+        min-height: 54px;
         border: none;
         border-radius: 14px;
-        background: linear-gradient(135deg,#6366F1,#8B5CF6);
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
         color: white;
-        font-size: 17px;
+        font-size: 16px;
         font-weight: 600;
-        transition: .25s;
+        transition: .2s;
     }
 
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(99,102,241,.35);
-        }
+    .btn-login:hover {
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(79, 70, 229, .3);
+    }
 
     .alert {
         border-radius: 12px;
     }
 
-    @@media(max - width:576px) {
+    .back-link {
+        color: #64748b;
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+    .back-link:hover {
+        color: #4f46e5;
+    }
+
+    @@media (max-width: 576px) {
         .login-card {
-            padding: 28px;
+            padding: 28px 22px;
             border-radius: 18px;
         }
     }

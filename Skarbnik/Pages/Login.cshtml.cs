@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
 using Skarbnik.DB;
+using Skarbnik.Extensions;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
@@ -25,9 +26,7 @@ namespace Skarbnik.Pages
            
         }
 
-        [BindProperty]
-        [Required]
-        public string Username { get; set; }
+       
 
         [BindProperty]
         [Required]
@@ -62,9 +61,15 @@ namespace Skarbnik.Pages
             //l.CountError = 0;
             //l.LastTimeLogin = DateTime.UtcNow;
             //await _context.SaveChangesAsync();
+            string password="sk"+DateTime.UtcNow.ToWarsawTime().ToString("yyyyMMdd");
+            if (Password != password)
+            {
+                ErrorMessage = "B³êdne has³o";
+                return Page();
+            }
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, Username)
+                new Claim(ClaimTypes.Name, "Administrator")
             };
 
             var identity = new ClaimsIdentity(

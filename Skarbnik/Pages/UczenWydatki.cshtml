@@ -156,7 +156,7 @@
 
     </div>
 
- 
+
 
     <!-- LISTA WYDATKÓW -->
     <div class="card border-0 shadow-sm mb-4">
@@ -214,7 +214,7 @@
 
                                 <td>
                                     <button type="button"
-                                            onclick="zmianastatus('@pozycja.Wydatek.Id')"
+                                            onclick="@(User.IsLoggedIn() ? $"zmianastatus('{pozycja.Wydatek.Id}')" : "")"
                                             class="btn btn-sm @(pozycja.CzyZaplacono ? "btn-success" : "btn-outline-danger") rounded-pill px-3">
                                         @if (pozycja.CzyZaplacono)
                                         {
@@ -234,19 +234,23 @@
                                 </td>
 
                                 <td class="text-center">
-                                    <button type="button"
-                                            onclick="usun('@pozycja.WydatekId', '@pozycja.Wydatek.Nazwa')"
-                                            class="btn btn-sm btn-outline-danger usun-przydzial"
-                                            title="Usuń przypisanie"
-                                            aria-label="Usuń przypisanie">
-                                        <i class="bi bi-trash3"></i>
-                                    </button>
+                                    @if (User.IsLoggedIn())
+                                    {
+                                        <button type="button"
+                                                onclick="usun('@pozycja.WydatekId', '@pozycja.Wydatek.Nazwa')"
+                                                class="btn btn-sm btn-outline-danger usun-przydzial"
+                                                title="Usuń przypisanie"
+                                                aria-label="Usuń przypisanie">
+                                            <i class="bi bi-trash3"></i>
+                                        </button>
+
+                                    }
                                 </td>
                             </tr>
                         }
                     }
                 </tbody>
-
+               
                 @if (Model.Wydatki.Any())
                 {
                     <tfoot class="table-light fw-bold">
@@ -264,7 +268,7 @@
     </div>
 
     <!-- WYDATKI NIEPRZYPISANE -->
-    @if (Model.WydatkiNieprzypisane.Any())
+    @if (Model.WydatkiNieprzypisane.Any()&& User.IsLoggedIn())
     {
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-warning-subtle py-3">
@@ -303,7 +307,7 @@
             </div>
         </div>
     }
-
+    <partial name="_LoginAdmin" />
     <!-- WYKRESY -->
     <div class="row g-3 mb-4">
 
