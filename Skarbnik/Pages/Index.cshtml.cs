@@ -420,7 +420,10 @@ namespace Skarbnik.Pages
                             Id = przypisanie.id,
                             Kwota = przypisanie.Kwota,
                             CzyZaplacono = przypisanie.CzyZaplacono,
-                            Nazwa = wydatek.Nazwa
+                            Nazwa = wydatek.Nazwa,
+                            UczenId = uczen.Id,
+                            WydatekId = wydatek.Id
+
 
                         });
 

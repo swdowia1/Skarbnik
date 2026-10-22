@@ -1,0 +1,54 @@
+@page
+@model Skarbnik.Pages.NiezaplaconeModel
+@using Skarbnik.Extensions
+
+@{
+    ViewData["Title"] = "Niezapłacone wydatki";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Niezapłacone wydatki</h1>
+
+    @if (Model.Pozycje.Count == 0)
+    {
+        <div class="alert alert-success">Wszystkie przypisane wydatki są opłacone.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Uczeń</th>
+                        <th>Wydatek</th>
+                        <th class="text-end">Kwota</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pozycja in Model.Pozycje)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-page="/UczenWydatki" asp-route-id="@pozycja.UczenId" class="text-decoration-none">
+                                    @pozycja.Nazwisko
+                                </a>
+                            </td>
+                            <td>
+                                <a asp-page="/Wydatek" asp-route-id="@pozycja.WydatekId" class="text-decoration-none">
+                                    @pozycja.NazwaWydatku
+                                </a>
+                            </td>
+                            <td class="text-end text-danger fw-bold">@pozycja.Kwota.ToPln()</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="table-warning fw-bold">
+                        <td colspan="2">Razem niezapłacone</td>
+                        <td class="text-end">@Model.SumaNiezaplaconych.ToPln()</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    }
+</div>

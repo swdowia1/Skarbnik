@@ -38,6 +38,15 @@
                                 </a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link text-dark"
+                                   asp-area=""
+                                   asp-page="/Niezaplacone">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    Niezapłacone
+                                </a>
+                            </li>
+
                             <li class="nav-item ms-sm-auto">
                                 <form method="post" asp-page="/Logout" class="d-inline">
                                     <button type="submit" class="btn btn-logout">
@@ -71,11 +80,37 @@
             </div>
         </nav>
     </header>
-    <div class="container-fluid px-3">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+<div class="container-fluid px-3">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+
+    <div class="text-center small py-2">
+        @{
+#if DEBUG
+        }
+            <span class="text-danger fw-bold">
+                <i class="bi bi-bug-fill"></i>
+                Wersja DEBUG
+            </span>
+            <span class="text-muted">
+                @System.IO.File.GetLastWriteTime(
+                    System.Reflection.Assembly.GetExecutingAssembly().Location
+                ).ToString("yyyy-MM-dd HH:mm")
+            </span>
+        @{
+#else
+        }
+            <span class="text-muted">
+                Wersja: @System.IO.File.GetLastWriteTime(
+                    System.Reflection.Assembly.GetExecutingAssembly().Location
+                ).ToString("yyyy-MM-dd HH:mm")
+            </span>
+        @{
+#endif
+        }
     </div>
+</div>
    
     <div class="modal fade confirm-modal"
          id="globalConfirmModal"

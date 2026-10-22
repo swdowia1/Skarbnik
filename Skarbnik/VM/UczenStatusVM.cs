@@ -5,7 +5,7 @@ namespace Skarbnik.VM
     public class UczenStatusVM
     {
         public int UczenId { get; set; }
-
+        public int UczenWydatekId { get; set; }
 
 
         public string Nazwisko { get; set; } = string.Empty;

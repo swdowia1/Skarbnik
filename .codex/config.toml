@@ -1,0 +1,9 @@
+
+# Konfiguracja Codex dla projektu Skarbnik
+
+# Agent może zmieniać pliki we własnym obszarze roboczym.
+sandbox_mode = "workspace-write"
+
+# Przy operacjach wymagających dodatkowej zgody
+# Codex powinien zapytać użytkownika.
+approval_policy = "on-request"

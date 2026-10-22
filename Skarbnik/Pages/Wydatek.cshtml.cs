@@ -49,8 +49,10 @@ namespace Skarbnik.Pages
     {
         UczenId = u.Id,
          Nazwisko= u.Nazwisko,
-
-         StanPlatnosc = przypisanie == null
+        UczenWydatekId = przypisanie == null
+            ? 0
+            : przypisanie.Id,
+        StanPlatnosc = przypisanie == null
             ? StanPlatnosc.Brak
             : przypisanie.CzyZaplacono
                 ? StanPlatnosc.Zaplacono

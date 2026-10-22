@@ -18,18 +18,30 @@ namespace Skarbnik
             _context = context;
         }
 
-
-        //dodawanie dlawszystkich uczniów do wydatku
-        // `/api/baza/wydatek/${wydatekId}/addall`,
         [HttpPost("wydatek/{wydatekId:int}/addall")]
         public async Task<IActionResult> DodajWszystkichUczniowDoWydatku(int wydatekId)
         {
+            var wydatekIstnieje = await _context.Wydatki
+                .AnyAsync(w => w.Id == wydatekId);
+
+            if (!wydatekIstnieje)
+            {
+                return NotFound(new
+                {
+                    message = "Nie znaleziono wydatku."
+                });
+            }
+
             var uczniowie = await _context.Uczniowie.ToListAsync();
             var przypisania = new List<UczenWydatek>();
+
             foreach (var uczen in uczniowie)
             {
                 var istniejePrzypisanie = await _context.UczenWydatki
-                    .AnyAsync(x => x.WydatekId == wydatekId && x.UczenId == uczen.Id);
+                    .AnyAsync(x =>
+                        x.WydatekId == wydatekId &&
+                        x.UczenId == uczen.Id);
+
                 if (!istniejePrzypisanie)
                 {
                     przypisania.Add(new UczenWydatek
@@ -40,11 +52,13 @@ namespace Skarbnik
                     });
                 }
             }
+
             if (przypisania.Count > 0)
             {
                 _context.UczenWydatki.AddRange(przypisania);
                 await _context.SaveChangesAsync();
             }
+
             return Ok(new
             {
                 message = "Dodano wszystkich uczniów do wydatku.",
@@ -52,8 +66,7 @@ namespace Skarbnik
             });
         }
 
-        // Oznaczenie wpłaty jako zapłaconej
-        [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/zaplacono")]
+        [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/status")]
         public async Task<IActionResult> OznaczJakoZaplacono(
             int wydatekId,
             int uczenId)
@@ -83,11 +96,8 @@ namespace Skarbnik
             });
         }
 
-
-
-        // Cofnięcie potwierdzenia wpłaty
         [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/usun")]
-        public async Task<IActionResult> UsunWpate(
+        public async Task<IActionResult> UsunWplate(
             int wydatekId,
             int uczenId)
         {
@@ -95,14 +105,16 @@ namespace Skarbnik
                 .FirstOrDefaultAsync(x =>
                     x.WydatekId == wydatekId &&
                     x.UczenId == uczenId);
-            if(przypisanie == null)
+
+            if (przypisanie == null)
             {
-                return Ok(new
+                return NotFound(new
                 {
                     message = "Nie znaleziono przypisania ucznia do wydatku."
                 });
             }
-           _context.UczenWydatki.Remove(przypisanie);
+
+            _context.UczenWydatki.Remove(przypisanie);
             await _context.SaveChangesAsync();
 
             return Ok(new
@@ -110,12 +122,12 @@ namespace Skarbnik
                 message = "Usunięto przypisanie ucznia do wydatku."
             });
         }
-        // /api/baza/wydatek/${wydatekId}/usun`
+
         [HttpPost("wydatek/{wydatekId:int}/usun")]
-        public async Task<IActionResult> UsunWydatek(int wydatekId )
+        public async Task<IActionResult> UsunWydatek(int wydatekId)
         {
             var wydatek = await _context.Wydatki
-        .FirstOrDefaultAsync(w => w.Id == wydatekId);
+                .FirstOrDefaultAsync(w => w.Id == wydatekId);
 
             if (wydatek == null)
             {
@@ -139,52 +151,76 @@ namespace Skarbnik
                 message = "Wydatek został usunięty."
             });
         }
-        
-            //`/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
-            [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/zmianastatus")]
-        public async Task<IActionResult> zmianastatus(
-           int wydatekId,
-           int uczenId)
+
+        [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/zmianastatus")]
+        public async Task<IActionResult> ZmienStatus(
+            int wydatekId,
+            int uczenId)
         {
+            var wydatekIstnieje = await _context.Wydatki
+                .AnyAsync(w => w.Id == wydatekId);
+
+            if (!wydatekIstnieje)
+            {
+                return NotFound(new
+                {
+                    message = "Nie znaleziono wydatku."
+                });
+            }
+
+            var uczenIstnieje = await _context.Uczniowie
+                .AnyAsync(u => u.Id == uczenId);
+
+            if (!uczenIstnieje)
+            {
+                return NotFound(new
+                {
+                    message = "Nie znaleziono ucznia."
+                });
+            }
+
             var przypisanie = await _context.UczenWydatki
                 .FirstOrDefaultAsync(x =>
                     x.WydatekId == wydatekId &&
                     x.UczenId == uczenId);
+
             if (przypisanie == null)
             {
-              UczenWydatek uw=new UczenWydatek();
-                uw.WydatekId=wydatekId;
-                uw.UczenId=uczenId;
-                uw.CzyZaplacono=false;
-                _context.UczenWydatki.Add(uw);
-                _context.SaveChanges();
+                przypisanie = new UczenWydatek
+                {
+                    WydatekId = wydatekId,
+                    UczenId = uczenId,
+                    CzyZaplacono = false
+                };
+
+                _context.UczenWydatki.Add(przypisanie);
+                await _context.SaveChangesAsync();
 
                 return Ok(new
                 {
                     message = "Dodano przypisanie ucznia do wydatku."
                 });
             }
-            if (przypisanie.CzyZaplacono == false)
+
+            if (!przypisanie.CzyZaplacono)
             {
                 przypisanie.CzyZaplacono = true;
-                przypisanie.DataZaplaty = DateTime.UtcNow;
-                _context.SaveChanges();
-                return Ok(new
-                {
-                    message = "Oznaczono jako zapłacone."
-                });
+                przypisanie.DataZaplaty = DateTime.Now;
             }
             else
             {
                 przypisanie.CzyZaplacono = false;
                 przypisanie.DataZaplaty = null;
-                _context.SaveChanges();
-                return Ok(new
-                {
-                    message = "Oznaczono jako niezapłacone."
-                });
             }
-           
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = przypisanie.CzyZaplacono
+                    ? "Oznaczono jako zapłacone."
+                    : "Oznaczono jako niezapłacone."
+            });
         }
     }
 }

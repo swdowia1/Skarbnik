@@ -1,25 +1,29 @@
 ﻿@page
 @model IndexModel
 @using Skarbnik.Extensions
+
 @{
     ViewData["Title"] = "Home page";
-
 }
+
 <div class="container-fluid mt-4">
     <h1 class="mb-4">Podsumowanie wydatków klasy</h1>
-    <a asp-page-handler="TestExcel"
-       class="btn btn-outline-success">
+
+    <a asp-page-handler="TestExcel" class="btn btn-outline-success">
         <i class="bi bi-file-earmark-excel me-2"></i>
-        Zapisz do piku XLS
+        Zapisz do pliku XLS
     </a>
+
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle">
             <thead class="table-light">
                 <tr>
                     <th class="text-nowrap">Uczeń</th>
+
                     @foreach (var wydatek in Model.Podsumowanie.Wydatki)
                     {
-                        <th title="@wydatek.Kwota" class="text-end text-nowrap nazwa-wydatku-pionowo">
+                        <th title="@wydatek.Kwota"
+                            class="text-end text-nowrap nazwa-wydatku-pionowo">
                             <a asp-page="/Wydatek"
                                asp-route-id="@wydatek.Id"
                                class="text-decoration-none">
@@ -27,9 +31,11 @@
                             </a>
                         </th>
                     }
+
                     <th class="text-end text-nowrap">Nie zapłacone</th>
                 </tr>
             </thead>
+
             <tbody>
                 @foreach (var uczen in Model.Podsumowanie.Uczniowie)
                 {
@@ -41,86 +47,97 @@
                                 @uczen.Nazwisko
                             </a>
                         </td>
+
                         @foreach (var komorka in uczen.Wydatki)
                         {
-                            <td title="@uczen.Nazwisko --> @komorka.Nazwa" class="text-end text-nowrap
-                            @(komorka.Kwota.HasValue
-                                                                                                        ? (!komorka.CzyZaplacono
-                                                                                                            ? "text-danger fw-bold"
-                                                                                                            : "table-success")
-                                                                                                        : "table-warning")">
-
-                        @if (komorka.Kwota.HasValue)
+                            <td onclick="zmianastatus('@komorka.WydatekId', '@komorka.UczenId')"
+                                title="@uczen.Nazwisko --> @komorka.Nazwa"
+                                class="text-end text-nowrap @(komorka.Kwota.HasValue
+                                    ? (!komorka.CzyZaplacono ? "text-danger fw-bold" : "table-success")
+                                    : "table-warning")">
+                                @if (komorka.Kwota.HasValue)
                                 {
-                                    <a asp-page="/Szczegoly"
-                                       asp-route-id="@komorka.Id"
-                                       class="text-reset text-decoration-none">
-                                        @komorka.Kwota.Value.ToPln()
-                                    </a>
+                                    @komorka.Kwota.Value.ToPln()
                                 }
                                 else
                                 {
-                                    @*  <a asp-page="/Przypisz"
-                                       asp-route-uczenId="@komorka.UczenId"
-                                       asp-route-wydatekId="@komorka.WydatekId"
-                                       class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center"
-                                       style="width: 30px; height: 30px; font-size: 20px; line-height: 1; padding: 0;"
-                                       title="Dodaj płatność"
-                                       aria-label="Dodaj płatność">
-                                        +
-                                    </a> *@
-                                    @if (User.IsLoggedIn())
-                                    {
-
-
-                                        <a asp-page="/Przypisz"
-                                        asp-route-uczenId="@komorka.UczenId"
-                                        asp-route-wydatekId="@komorka.WydatekId"
-                                        class="btn btn-sm btn-outline-primary rounded-circle">
-                                            <i class="bi bi-plus-lg"></i>
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">Brak</span>
-                                    }
+                                    <span class="text-muted">Brak</span>
                                 }
-
                             </td>
                         }
-                        <td class="text-end text-nowrap @(uczen.SumaNiezaplacona > 0 ? " text-danger fw-bold" : "")"> @uczen.SumaNiezaplacona.ToPln() </td>
+
+                        <td class="text-end text-nowrap @(uczen.SumaNiezaplacona > 0 ? "text-danger fw-bold" : "")">
+                            @uczen.SumaNiezaplacona.ToPln()
+                        </td>
                     </tr>
                 }
             </tbody>
+
             <tfoot>
                 <tr class="table-light fw-bold">
-                    <td>Razem</td> @foreach (var wydatek in Model.Podsumowanie.Wydatki) {
-                    <td class="text-end text-nowrap"> @wydatek.Suma.ToPln() </td>
-                                        }
-                    <td class="text-end text-nowrap"> @Model.Podsumowanie.SumaWszystkichZaleglosci.ToPln() </td>
+                    <td>Razem</td>
+
+                    @foreach (var wydatek in Model.Podsumowanie.Wydatki)
+                    {
+                        <td class="text-end text-nowrap">
+                            @wydatek.Suma.ToPln()
+                        </td>
+                    }
+
+                    <td class="text-end text-nowrap">
+                        @Model.Podsumowanie.SumaWszystkichZaleglosci.ToPln()
+                    </td>
                 </tr>
+
                 <tr class="table-warning fw-bold">
-                    <td>Nie zapłacone</td> @foreach (var wydatek in Model.Podsumowanie.Wydatki) {
-                    <td class="text-end text-nowrap text-danger"> @wydatek.SumaNiezaplacona.ToPln() </td>
-                                        }
-                    <td class="text-end text-nowrap text-danger"> @Model.Podsumowanie.SumaWszystkichZaleglosci.ToPln() </td>
+                    <td>Nie zapłacone</td>
+
+                    @foreach (var wydatek in Model.Podsumowanie.Wydatki)
+                    {
+                        <td class="text-end text-nowrap text-danger">
+                            @wydatek.SumaNiezaplacona.ToPln()
+                        </td>
+                    }
+
+                    <td class="text-end text-nowrap text-danger">
+                        @Model.Podsumowanie.SumaWszystkichZaleglosci.ToPln()
+                    </td>
                 </tr>
             </tfoot>
         </table>
     </div>
+
     @await Html.PartialAsync("_Uwaga", new Skarbnik.VM.UwagaVM
-        {
+    {
         Header = "Informacja",
         Body = @"
-        <p>
-        <span class='text-danger fw-bold'>Czerwony kolor</span>
-        oznacza niezapłacony wydatek.
-        </p>
-        <p>
-        <span class='badge bg-secondary'>Brak</span>
-        oznacza, że wydatek nie dotyczy ucznia.
-        </p>
-       "
-        })
+            <p>
+                <span class='text-danger fw-bold'>Czerwony kolor</span>
+                oznacza niezapłacony wydatek.
+            </p>
+            <p>
+                <span class='badge bg-secondary'>Brak</span>
+                oznacza, że wydatek nie dotyczy ucznia.
+            </p>
+        "
+    })
 </div>
 
+<script>
+    function zmianastatus(wydatekId, uczenId) {
+        postjson(
+            `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
+            {},
+            function (wynik) {
+                console.log("Sukces:", wynik.message);
+                load();
+            },
+            function (xhr, status, error) {
+                console.error("HTTP:", xhr.status);
+                console.error("Status:", status);
+                console.error("Błąd:", error);
+                console.error("Odpowiedź:", xhr.responseText);
+            }
+        );
+    }
+</script>

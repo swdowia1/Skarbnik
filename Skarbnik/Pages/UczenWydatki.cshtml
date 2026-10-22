@@ -39,8 +39,14 @@
     };
 }
 
-<div class="container-fluid py-4">
-
+<div id="glowny" class="container-fluid py-4">
+    <button id="btnZapisz"
+            type="button"
+            class="btn btn-primary"
+            onclick="zapiszElementJakoJpg2('glowny', 'wydatek.jpg')">
+        <i class="bi bi-image me-1"></i>
+        Zapisz jako JPG
+    </button>
     <!-- NAGŁÓWEK -->
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
@@ -175,6 +181,7 @@
                     <tr>
                         <th>Wydatek</th>
                         <th class="text-end">Kwota</th>
+                        <th></th>
                         <th>Status</th>
                         <th>Data zapłaty</th>
                         <th class="text-center">Akcje</th>
@@ -203,7 +210,14 @@
                                         @pozycja.Wydatek.Nazwa
                                     </a>
                                 </td>
-
+                                <th>
+                                    <a asp-page="/Szczegoly"
+                                       asp-route-id="@pozycja.Id"
+                                       class="btn btn-sm btn-outline-primary"
+                                       title="Szczegóły wydatku">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </th>
                                 <td class="text-end text-nowrap fw-semibold">
                                     @pozycja.Wydatek.Kwota.ToPln()
                                 </td>
