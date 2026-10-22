@@ -334,7 +334,7 @@ namespace Skarbnik.Pages
                 $"Skarbnik_Wydatki_{DateTime.Now:yyyyMMdd}.xlsx");
         }
        
-        public PodsumowanieVM Podsumowanie { get; set; } = new();
+        public SummaryViewModel Podsumowanie { get; set; } = new();
 
         public async Task OnGetAsync()
         {
@@ -347,7 +347,7 @@ namespace Skarbnik.Pages
             var mapa = przypisania.ToDictionary(
                 x => (x.UczenId, x.WydatekId));
 
-            Podsumowanie = new PodsumowanieVM();
+            Podsumowanie = new SummaryViewModel();
 
             foreach (var wydatek in wydatki)
             {
@@ -355,7 +355,7 @@ namespace Skarbnik.Pages
                     .Where(p => p.WydatekId == wydatek.Id)
                     .ToList();
 
-                Podsumowanie.Wydatki.Add(new WydatekKolumnaVM
+                Podsumowanie.Wydatki.Add(new ExpenseColumnViewModel
                 {
                     Id = wydatek.Id,
                     Nazwa = wydatek.Nazwa,
@@ -370,7 +370,7 @@ namespace Skarbnik.Pages
 
             foreach (var uczen in uczniowie)
             {
-                var wiersz = new UczenPodsumowanieVM
+                var wiersz = new StudentSummaryViewModel
                 {
                     Id = uczen.Id,
                     Nazwisko = $"{uczen.Nazwisko}"
@@ -381,7 +381,7 @@ namespace Skarbnik.Pages
                     if (mapa.TryGetValue(
                         (uczen.Id, wydatek.Id), out var przypisanie))
                     {
-                        wiersz.Wydatki.Add(new KomorkaWydatkuVM
+                        wiersz.Wydatki.Add(new ExpenseCellViewModel
                         {
                             Id = przypisanie.Id,
                             Kwota = przypisanie.Wydatek.Kwota,
@@ -401,7 +401,7 @@ namespace Skarbnik.Pages
                     }
                     else
                     {
-                        wiersz.Wydatki.Add(new KomorkaWydatkuVM
+                        wiersz.Wydatki.Add(new ExpenseCellViewModel
                         {
                             Kwota = null,
                             UczenId = uczen.Id,

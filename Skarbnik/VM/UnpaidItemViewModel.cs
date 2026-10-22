@@ -1,6 +1,6 @@
 namespace Skarbnik.VM
 {
-    public class PozycjaNiezaplacona
+    public class UnpaidItemViewModel
     {
         public int UczenId { get; set; }
         public string Nazwisko { get; set; } = string.Empty;

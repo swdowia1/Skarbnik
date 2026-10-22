@@ -11,7 +11,7 @@ namespace Skarbnik.Pages
         private readonly UczenService _uczenService;
         public Wydatek WydatekDane { get; set; } = null!;
 
-        public List<UczenStatusVM> Uczniowie { get; set; } = new();
+        public List<StudentStatusViewModel> Uczniowie { get; set; } = new();
         public WydatekModel(UczenService uczenService)
         {
             _uczenService = uczenService;

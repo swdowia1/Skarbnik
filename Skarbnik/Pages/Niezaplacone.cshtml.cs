@@ -13,7 +13,7 @@ namespace Skarbnik.Pages
             _uczenService = uczenService;
         }
 
-        public List<PozycjaNiezaplacona> Pozycje { get; private set; } = new();
+        public List<UnpaidItemViewModel> Pozycje { get; private set; } = new();
 
         public decimal SumaNiezaplaconych => Pozycje.Sum(p => p.Kwota);
 

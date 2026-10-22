@@ -1,6 +1,6 @@
-﻿namespace Skarbnik.VM
+namespace Skarbnik.VM
 {
-    public class WydatekKolumnaVM
+    public class ExpenseColumnViewModel
     {
         public int Id { get; set; }
         public string Nazwa { get; set; } = string.Empty;

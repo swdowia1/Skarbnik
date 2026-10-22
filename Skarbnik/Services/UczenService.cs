@@ -166,7 +166,7 @@ namespace Skarbnik.Services
             return wydatek;
         }
 
-        public Task<List<PozycjaNiezaplacona>> PobierzNiezaplaconeAsync()
+        public Task<List<UnpaidItemViewModel>> PobierzNiezaplaconeAsync()
         {
             return _context.UczenWydatki
                 .AsNoTracking()
@@ -175,7 +175,7 @@ namespace Skarbnik.Services
                 .ThenBy(uw => uw.Wydatek.Nazwa)
                 .ThenBy(uw => uw.UczenId)
                 .ThenBy(uw => uw.WydatekId)
-                .Select(uw => new PozycjaNiezaplacona
+                .Select(uw => new UnpaidItemViewModel
                 {
                     UczenId = uw.UczenId,
                     Nazwisko = uw.Uczen.Nazwisko,
@@ -217,7 +217,7 @@ namespace Skarbnik.Services
                 .ToListAsync();
         }
 
-        public Task<List<UczenStatusVM>> PobierzStatusyUczniowWydatkuAsync(int wydatekId)
+        public Task<List<StudentStatusViewModel>> PobierzStatusyUczniowWydatkuAsync(int wydatekId)
         {
             return (
                 from u in _context.Uczniowie.AsNoTracking()
@@ -226,7 +226,7 @@ namespace Skarbnik.Services
                     on u.Id equals uw.UczenId into przypisaniaUcznia
                 from przypisanie in przypisaniaUcznia.DefaultIfEmpty()
                 orderby u.Id
-                select new UczenStatusVM
+                select new StudentStatusViewModel
                 {
                     UczenId = u.Id,
                     Nazwisko = u.Nazwisko,

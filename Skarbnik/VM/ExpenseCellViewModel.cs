@@ -1,6 +1,6 @@
-﻿namespace Skarbnik.VM
+namespace Skarbnik.VM
 {
-    public class KomorkaWydatkuVM
+    public class ExpenseCellViewModel
     {
         public int Id { get; set; }
         public decimal? Kwota { get; set; }

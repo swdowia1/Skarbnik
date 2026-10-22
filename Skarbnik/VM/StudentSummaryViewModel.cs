@@ -1,11 +1,11 @@
-﻿namespace Skarbnik.VM
+namespace Skarbnik.VM
 {
-    public class UczenPodsumowanieVM
+    public class StudentSummaryViewModel
     {
         public int Id { get; set; }
         public string Nazwisko { get; set; } = string.Empty;
 
-        public List<KomorkaWydatkuVM> Wydatki { get; set; } = new();
+        public List<ExpenseCellViewModel> Wydatki { get; set; } = new();
 
         public decimal SumaNiezaplacona { get; set; }
     }

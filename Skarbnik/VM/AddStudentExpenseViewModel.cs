@@ -1,6 +1,6 @@
-﻿namespace Skarbnik.VM
+namespace Skarbnik.VM
 {
-    public class AddUczenWydatekWM
+    public class AddStudentExpenseViewModel
     {
         public int UczenId { get; set; }
         public int WydatekId { get; set; }

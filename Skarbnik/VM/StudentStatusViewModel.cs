@@ -1,8 +1,8 @@
-﻿using Skarbnik.Enums;
+using Skarbnik.Enums;
 
 namespace Skarbnik.VM
 {
-    public class UczenStatusVM
+    public class StudentStatusViewModel
     {
         public int UczenId { get; set; }
         public int UczenWydatekId { get; set; }
