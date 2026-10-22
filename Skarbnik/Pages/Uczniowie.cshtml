@@ -1,0 +1,58 @@
+@page
+@model Skarbnik.Pages.UczniowieModel
+
+@{
+    ViewData["Title"] = "Lista uczniów";
+}
+<partial name="_LoginAdmin" />
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Lista uczniów</h1>
+        <span class="badge text-bg-secondary">Razem: @Model.Uczniowie.Count</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Uczeń</th>
+                    <th>Skrót</th>
+                    <th class="text-end">Akcje</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Uczniowie.Count == 0)
+                {
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">Brak uczniów.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var uczen in Model.Uczniowie)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-page="/UczenWydatki" asp-route-id="@uczen.Id" class="text-decoration-none">
+                                    @uczen.Nazwisko
+                                </a>
+                            </td>
+                            <td>@uczen.Skrot</td>
+                            <td class="text-end">
+                                @if (User.Identity?.IsAuthenticated == true)
+                                {
+                                    <a asp-page="/EdytujUcznia"
+                                       asp-route-id="@uczen.Id"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil-square me-1"></i>
+                                        Edytuj
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

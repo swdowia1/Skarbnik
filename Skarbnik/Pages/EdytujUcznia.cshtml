@@ -1,0 +1,38 @@
+@page "{id:int}"
+@model Skarbnik.Pages.EdytujUczniaModel
+
+@{
+    ViewData["Title"] = "Edycja ucznia";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+
+    <form method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="Nazwisko" class="form-label"></label>
+            <input asp-for="Nazwisko" class="form-control" />
+            <span asp-validation-for="Nazwisko" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Skrot" class="form-label"></label>
+            <input asp-for="Skrot" class="form-control" />
+            <span asp-validation-for="Skrot" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save me-1"></i>
+            Zapisz zmiany
+        </button>
+        <a asp-page="/UczenWydatki" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+            Anuluj
+        </a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

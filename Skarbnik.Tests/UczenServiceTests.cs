@@ -34,6 +34,49 @@ public sealed class UczenServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AktualizujAsync_ZapisujeZmianyIstniejacegoUcznia()
+    {
+        var uczen = await DodajUczniaAsync();
+
+        var wynik = await _service.AktualizujAsync(new Uczen
+        {
+            Id = uczen.Id,
+            Nazwisko = "Nowak",
+            Skrot = "N"
+        });
+
+        Assert.True(wynik);
+        Assert.Equal("Nowak", uczen.Nazwisko);
+        Assert.Equal("N", uczen.Skrot);
+    }
+
+    [Fact]
+    public async Task AktualizujAsync_ZwracaFalseDlaNieistniejacegoUcznia()
+    {
+        var wynik = await _service.AktualizujAsync(new Uczen
+        {
+            Id = 999,
+            Nazwisko = "Nowak",
+            Skrot = "N"
+        });
+
+        Assert.False(wynik);
+        Assert.Empty(await _context.Uczniowie.ToListAsync());
+    }
+
+    [Fact]
+    public async Task PobierzWszystkichAsync_SortujeUczniowPoNazwisku()
+    {
+        await DodajUczniaAsync();
+        _context.Uczniowie.Add(new Uczen { Nazwisko = "Adamski", Skrot = "A" });
+        await _context.SaveChangesAsync();
+
+        var uczniowie = await _service.PobierzWszystkichAsync();
+
+        Assert.Equal(new[] { "Adamski", "Kowalski" }, uczniowie.Select(uczen => uczen.Nazwisko));
+    }
+
+    [Fact]
     public async Task PrzypiszWydatekAsync_DodajeNieoplaconePrzypisanie()
     {
         var (uczen, wydatek) = await DodajUczniaIWydatekAsync();

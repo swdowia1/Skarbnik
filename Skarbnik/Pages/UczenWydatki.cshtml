@@ -59,6 +59,16 @@
             </div>
         </div>
 
+        @if (User.IsLoggedIn())
+        {
+            <a asp-page="/EdytujUcznia"
+               asp-route-id="@Model.UczenDane.Id"
+               class="btn btn-outline-primary">
+                <i class="bi bi-pencil-square me-1"></i>
+                Edytuj ucznia
+            </a>
+        }
+
     </div>
 
     <!-- KARTY PODSUMOWANIA -->

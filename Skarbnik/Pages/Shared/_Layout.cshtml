@@ -27,6 +27,13 @@
                    
                     <ul class="navbar-nav flex-grow-1">
 
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-page="/Uczniowie">
+                                <i class="bi bi-people"></i>
+                                Uczniowie
+                            </a>
+                        </li>
+
                         @if ((User.IsLoggedIn()))
                         {
                             <li class="nav-item">

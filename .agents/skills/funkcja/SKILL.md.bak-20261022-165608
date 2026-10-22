@@ -1,0 +1,122 @@
+---
+name: funkcja
+description: Realizuje nowe funkcjonalnoœci i zmiany w projekcie SkarbnikCodex. 
+---
+
+# Skill: Realizacja funkcjonalnoœci — SkarbnikCodex
+
+## Cel
+
+Zrealizuj ¿¹dan¹ funkcjonalnoœæ w istniej¹cym projekcie SkarbnikCodex w sposób kontrolowany, prosty i zgodny z architektur¹ aplikacji.
+
+Pracuj od analizy przez plan do implementacji i weryfikacji.
+
+## 1. Zasady nadrzêdne
+
+1. Przeczytaj `AGENTS.md` i stosuj zawarte w nim zasady.
+2. Wykorzystuj istniej¹cy kod, konwencje, serwisy, modele i testy.
+3. Preferuj najmniejsz¹ zmianê, która poprawnie realizuje wymaganie.
+4. Nie przebudowuj architektury, jeœli zadanie tego nie wymaga.
+5. Nie dodawaj nowych pakietów ani bibliotek bez uzasadnionej potrzeby.
+6. Nie zmieniaj niezwi¹zanych plików.
+7. Nie usuwaj ani nie cofaj istniej¹cych zmian u¿ytkownika.
+8. Nie wykonuj commitów, pushowania ani wdro¿eñ bez wyraŸnej zgody u¿ytkownika.
+9. Nie zak³adaj, ¿e testy przesz³y — uruchom je i sprawdŸ rzeczywisty wynik.
+10. Komunikuj siê z u¿ytkownikiem po polsku.
+
+## 2. Etap analizy
+
+Przed implementacj¹:
+
+1. Ustal, co dok³adnie ma robiæ funkcjonalnoœæ.
+2. SprawdŸ strukturê projektu i powi¹zane pliki.
+3. Przeanalizuj odpowiednie modele, serwisy, PageModel, strony Razor, kontrolery API i istniej¹ce testy.
+4. SprawdŸ `git status` i `git diff`, aby poznaæ bie¿¹ce zmiany u¿ytkownika.
+5. Ustal, jakie pliki trzeba zmieniæ i jakie testy bêd¹ potrzebne.
+6. Zidentyfikuj ryzyka, zale¿noœci i mo¿liwe skutki uboczne.
+
+Nie zak³adaj, ¿e plik jest niezmieniony tylko dlatego, ¿e nie zosta³ zmodyfikowany przez bie¿¹ce zadanie.
+
+## 3. Plan przed implementacj¹
+
+Przed rozpoczêciem zmian przedstaw krótki plan zawieraj¹cy:
+
+- cel i sposób realizacji;
+- listê plików do zmiany lub utworzenia;
+- plan testów;
+- potencjalne ryzyka.
+
+W przypadku prostego, jednoznacznego zadania przedstaw plan i przejdŸ do realizacji.
+
+**Zapytaj u¿ytkownika o zgodê przed implementacj¹, je¿eli zadanie wymaga istotnej zmiany architektury, wielu niezale¿nych zmian, zmiany schematu bazy danych, migracji, zmiany bezpieczeñstwa lub autoryzacji albo innej decyzji o du¿ym wp³ywie na projekt.**
+
+Jeœli wymagania s¹ niejednoznaczne i wybór wp³ynie na zachowanie aplikacji, zadaj pytanie zamiast zgadywaæ.
+
+Nie zatrzymuj siê na planowaniu, jeœli zadanie jest jasne i nie wymaga dodatkowej zgody.
+
+## 4. Implementacja
+
+Po zaakceptowaniu planu, jeœli by³a wymagana zgoda:
+
+1. WprowadŸ zaplanowane zmiany.
+2. Zachowaj istniej¹cy styl kodu i nazewnictwo projektu.
+3. Stosuj istniej¹ce rozwi¹zania zamiast tworzyæ równoleg³e mechanizmy.
+4. Korzystaj z asynchronicznoœci tam, gdzie jest uzasadniona.
+5. Dodaj walidacjê i obs³ugê b³êdów odpowiedni¹ do danej funkcjonalnoœci.
+6. Uwzglêdnij autoryzacjê i bezpieczeñstwo, jeœli zmiana dotyczy operacji chronionych.
+7. Nie umieszczaj sekretów ani danych dostêpowych w kodzie.
+8. Aktualizuj istniej¹ce testy lub dodaj nowe, gdy zmiana tego wymaga.
+9. Nie zmieniaj zachowania niezwi¹zanego z zadaniem.
+10. Jeœli podczas pracy oka¿e siê, ¿e potrzebny jest znacznie szerszy zakres zmian, zatrzymaj siê i przedstaw nowy plan.
+
+## 5. Testy i weryfikacja
+
+Po implementacji:
+
+1. SprawdŸ diff, aby upewniæ siê, ¿e zmiany odpowiadaj¹ zadaniu.
+2. Uruchom istniej¹cy skrypt `scripts/verify.ps1`, zgodnie z jego aktualn¹ zawartoœci¹ i instrukcjami projektu.
+3. SprawdŸ, czy aplikacja siê buduje.
+4. Uruchom odpowiednie testy automatyczne, w tym testy z projektu `Skarbnik.Tests`, jeœli s¹ dostêpne i odpowiednie dla zmiany.
+5. SprawdŸ, czy testy nie wymagaj¹ produkcyjnej bazy danych lub innych niedostêpnych us³ug.
+6. Nie modyfikuj produkcyjnej bazy danych i nie wykonuj migracji bez zgody.
+7. Jeœli weryfikacja zakoñczy siê b³êdem, przeanalizuj przyczynê i popraw b³êdy wynikaj¹ce z w³asnych zmian.
+8. Nie ukrywaj niepowodzeñ i nie zmieniaj testów wy³¹cznie po to, aby uzyskaæ zielony wynik.
+9. Jeœli testów nie da siê uruchomiæ, wyjaœnij dlaczego.
+10. Nie naprawiaj niezwi¹zanych, istniej¹cych ostrze¿eñ i b³êdów bez potrzeby.
+
+Nie uznawaj samego uruchomienia skryptu za dowód sukcesu. SprawdŸ jego kod zakoñczenia oraz wyniki poszczególnych kontroli.
+
+## 6. Ochrona zmian u¿ytkownika
+
+- Nigdy nie u¿ywaj `git reset --hard`.
+- Nie wykonuj `git checkout --`, `git restore` ani innych operacji cofaj¹cych zmiany u¿ytkownika.
+- Nie nadpisuj plików u¿ytkownika bez sprawdzenia ich aktualnej zawartoœci.
+- Nie usuwaj nieznanych plików ani nieporzuconych zmian.
+- Nie wykonuj `git commit`, `git push`, merge ani wdro¿enia bez zgody.
+- Nie dodawaj automatycznie wszystkich plików do commita.
+- Przed zakoñczeniem sprawdŸ `git status` i `git diff`.
+
+## 7. Zakoñczenie zadania
+
+Po zakoñczeniu przedstaw raport po polsku zawieraj¹cy:
+
+### Wykonane zmiany
+- co zosta³o dodane lub zmienione;
+- listê zmodyfikowanych plików;
+- krótkie wyjaœnienie najwa¿niejszych decyzji.
+
+### Weryfikacja
+- wynik `scripts/verify.ps1`;
+- wynik kompilacji;
+- liczbê zaliczonych i niezaliczonych testów, jeœli mo¿na j¹ ustaliæ;
+- ostrze¿enia lub b³êdy, które pozosta³y.
+
+### Pozosta³e kwestie
+- ograniczenia, ryzyka lub czynnoœci wymagaj¹ce rêcznego sprawdzenia;
+- informacjê, czy u¿ytkownik musi wykonaæ dodatkowy krok.
+
+Nie deklaruj sukcesu, jeœli nie zosta³ potwierdzony wynikami.
+
+## Zasada koñcowa
+
+Twoim celem jest dostarczenie dzia³aj¹cej funkcjonalnoœci przy mo¿liwie najmniejszym zakresie zmian, z testami potwierdzaj¹cymi poprawnoœæ i bez naruszania pracy u¿ytkownika.
