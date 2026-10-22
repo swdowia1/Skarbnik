@@ -1,18 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Skarbnik.DB;
+using Skarbnik.Services;
 using Skarbnik.VM;
 
 namespace Skarbnik.Pages
 {
     public class UczenWydatkiModel : PageModel
     {
-        private readonly AppDbContext _context;
+        private readonly UczenService _uczenService;
         public int UczenId { get; set; }
-        public UczenWydatkiModel(AppDbContext context)
+        public UczenWydatkiModel(UczenService uczenService)
         {
-            _context = context;
+            _uczenService = uczenService;
         }
 
         public Uczen UczenDane { get; set; } = null!;
@@ -26,32 +26,22 @@ namespace Skarbnik.Pages
         public async Task<IActionResult> OnGetAsync(int id)
         {
             UczenId = id;
-            var uczen = await _context.Uczniowie
-                .FirstOrDefaultAsync(u => u.Id == id);
+            var uczen = await _uczenService.PobierzUczniaAsync(id, tylkoDoOdczytu: false);
 
             if (uczen == null)
                 return NotFound();
 
             UczenDane = uczen;
 
-            Wydatki = await _context.UczenWydatki
-                .Include(uw => uw.Wydatek)
-                .Where(uw => uw.UczenId == id)
-                .OrderBy(uw => uw.Wydatek.Nazwa)
-                .ToListAsync();
+            Wydatki = await _uczenService.PobierzWydatkiUczniaAsync(id);
 
             SumaWszystkich = Wydatki
                 .Sum(uw => uw.Wydatek.Kwota);
-            var przypisaneIds = Wydatki.Select(uw => uw.WydatekId).ToList();
             SumaNiezaplaconych = Wydatki
                 .Where(uw => !uw.CzyZaplacono)
                 .Sum(uw => uw.Wydatek.Kwota);
 
-            WydatkiNieprzypisane = await _context.Wydatki
-    .Where(w => !przypisaneIds.Contains(w.Id))
-    .OrderBy(w => w.Nazwa)
-    .Select(w => new IdName() {Id=w.Id,Name=w.Nazwa })
-    .ToListAsync();
+            WydatkiNieprzypisane = await _uczenService.PobierzNieprzypisaneWydatkiAsync(id);
             return Page();
         }
     }

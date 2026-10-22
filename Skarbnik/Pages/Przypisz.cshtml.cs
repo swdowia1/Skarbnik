@@ -1,17 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Skarbnik.DB;
+using Skarbnik.Services;
 
 namespace Skarbnik.Pages
 {
     public class PrzypiszModel : PageModel
     {
-        private readonly AppDbContext _context;
+        private readonly UczenService _uczenService;
 
-        public PrzypiszModel(AppDbContext context)
+        public PrzypiszModel(UczenService uczenService)
         {
-            _context = context;
+            _uczenService = uczenService;
         }
 
         public Uczen Uczen { get; set; } = null!;
@@ -32,34 +32,13 @@ namespace Skarbnik.Pages
         }
         public async Task<IActionResult> OnPostAsync(int uczenId, int wydatekId,    bool czyZaplacono)
         {
-            var uczen = await _context.Uczniowie.FirstOrDefaultAsync(u => u.Id == uczenId);
-
-            var wydatek = await _context.Wydatki.FirstOrDefaultAsync(w => w.Id == wydatekId);
+            var uczen = await _uczenService.PobierzUczniaAsync(uczenId);
+            var wydatek = await _uczenService.PobierzWydatekAsync(wydatekId);
 
             if (uczen == null || wydatek == null)
                 return NotFound();
 
-            // SprawdŸ, czy przypisanie ju¿ istnieje.
-            var istnieje = await _context.UczenWydatki.AnyAsync(uw =>uw.UczenId == uczenId && uw.WydatekId == wydatekId);
-
-            if (istnieje)
-            {
-                return RedirectToPage("/Index");
-            }
-
-            var przypisanie = new UczenWydatek
-            {
-                UczenId = uczenId,
-                WydatekId = wydatekId,
-                CzyZaplacono = czyZaplacono,
-                DataZaplaty = czyZaplacono
-                    ? DateTime.UtcNow
-                    : null
-            };
-
-            _context.UczenWydatki.Add(przypisanie);
-
-            await _context.SaveChangesAsync();
+            await _uczenService.PrzypiszWydatekAsync(uczenId, wydatekId, czyZaplacono);
 
             return RedirectToPage("/Index");
         }
@@ -67,13 +46,8 @@ namespace Skarbnik.Pages
        int uczenId,
        int wydatekId)
         {
-            var uczen = await _context.Uczniowie
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Id == uczenId);
-
-            var wydatek = await _context.Wydatki
-                .AsNoTracking()
-                .FirstOrDefaultAsync(w => w.Id == wydatekId);
+            var uczen = await _uczenService.PobierzUczniaAsync(uczenId);
+            var wydatek = await _uczenService.PobierzWydatekAsync(wydatekId);
 
             if (uczen == null || wydatek == null)
                 return null;

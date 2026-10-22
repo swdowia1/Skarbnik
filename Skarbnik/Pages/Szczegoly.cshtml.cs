@@ -1,32 +1,25 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Skarbnik.DB;
 using Skarbnik.Extensions;
+using Skarbnik.Services;
 
 namespace Skarbnik.Pages
 {
     public class SzczegolyModel : PageModel
     {
-        private readonly AppDbContext _context;
+        private readonly UczenService _uczenService;
         public UczenWydatek Przypisanie { get; set; } = null!;
-        public SzczegolyModel(AppDbContext context)
+        public SzczegolyModel(UczenService uczenService)
         {
-            _context = context;
+            _uczenService = uczenService;
         }
         public async Task<IActionResult> OnPostZaplaconoAsync(int id)
         {
-            var przypisanie = await _context.UczenWydatki
-                .FirstOrDefaultAsync(uw => uw.Id == id);
-
-            if (przypisanie == null)
+            var zapisano = await _uczenService.UstawCzyZaplaconoAsync(id, true);
+            if (!zapisano)
                 return NotFound();
-
-            przypisanie.CzyZaplacono = true;
-            przypisanie.DataZaplaty = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
 
             return RedirectToPage(new { id });
         }
@@ -35,41 +28,24 @@ namespace Skarbnik.Pages
         {
             if(!User.IsLoggedIn())
     return RedirectToPage("/Login");
-            var przypisanie = await _context.UczenWydatki
-                .FirstOrDefaultAsync(uw => uw.Id == id);
-
-            if (przypisanie == null)
+            var zapisano = await _uczenService.UstawCzyZaplaconoAsync(id, false);
+            if (!zapisano)
                 return NotFound();
-
-            przypisanie.CzyZaplacono = false;
-            przypisanie.DataZaplaty = null;
-
-            await _context.SaveChangesAsync();
 
             return RedirectToPage(new { id });
         }
 
         public async Task<IActionResult> OnPostUsunAsync(int id)
         {
-            var przypisanie = await _context.UczenWydatki
-                .FirstOrDefaultAsync(uw => uw.Id == id);
-
-            if (przypisanie == null)
+            var usunieto = await _uczenService.UsunPrzypisanieAsync(id);
+            if (!usunieto)
                 return NotFound();
-
-            _context.UczenWydatki.Remove(przypisanie);
-
-            await _context.SaveChangesAsync();
 
             return RedirectToPage("/Index");
         }
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            var przypisanie = await _context.UczenWydatki
-                .AsNoTracking()
-                .Include(uw => uw.Uczen)
-                .Include(uw => uw.Wydatek)
-                .FirstOrDefaultAsync(uw => uw.Id == id);
+            var przypisanie = await _uczenService.PobierzPrzypisanieAsync(id);
 
             if (przypisanie == null)
                 return NotFound();

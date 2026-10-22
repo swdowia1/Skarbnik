@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
-using Skarbnik.DB;
 using Skarbnik.Extensions;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
@@ -17,7 +16,6 @@ namespace Skarbnik.Pages
     {
  
         private readonly PasswordHasher<string> _hasher;
-        private readonly AppDbContext _context;
 
         public LoginModel()
         {
@@ -41,26 +39,6 @@ namespace Skarbnik.Pages
         {
            
 
-            //var result = _hasher.VerifyHashedPassword(
-            //    Username,
-            //    _settings.PasswordHash,
-            //    Password);
-
-            //if (result == PasswordVerificationResult.Failed)
-            //{
-            //    ErrorMessage = "B³êdne has³o";
-            //    l.CountError++;
-            //    if (l.CountError >= 3)
-            //    {
-            //        l.IsLocked = true;
-            //        ErrorMessage = " Konto zablokowane. Skontaktuj siê z administratorem.";
-            //    }
-            //    await _context.SaveChangesAsync();
-            //    return Page();
-            //}
-            //l.CountError = 0;
-            //l.LastTimeLogin = DateTime.UtcNow;
-            //await _context.SaveChangesAsync();
  string password="sk"+DateTime.UtcNow.ToWarsawTime().ToString("dd");           
 #if DEBUG
             Console.WriteLine("tryb dewoleprski");
@@ -69,7 +47,7 @@ namespace Skarbnik.Pages
 
              if (Password != password)
             {
-                ErrorMessage = "B³êdne has³o";
+                ErrorMessage = "BÅ‚Ä™dne hasÅ‚o";
                 return Page();
             }
 #endif

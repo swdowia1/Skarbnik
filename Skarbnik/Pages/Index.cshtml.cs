@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Skarbnik.DB;
+using Skarbnik.Services;
 using Skarbnik.VM;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -10,11 +10,11 @@ namespace Skarbnik.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly AppDbContext _context;
+        private readonly UczenService _uczenService;
 
-        public IndexModel(AppDbContext context)
+        public IndexModel(UczenService uczenService)
         {
-            _context = context;
+            _uczenService = uczenService;
         }
         public async Task<IActionResult> OnGetTestExcelAsync()
         {
@@ -24,16 +24,10 @@ namespace Skarbnik.Pages
             // POBRANIE DANYCH
             // ==========================================
 
-            var uczniowie = await _context.Uczniowie
-                .OrderBy(u => u.Id)
-                .ToListAsync();
-
-            var wydatki = await _context.Wydatki
-                .OrderBy(w => w.Nazwa)
-                .ToListAsync();
-
-            var przypisania = await _context.UczenWydatki
-                .ToListAsync();
+            var uczniowie = (await _uczenService.PobierzWszystkichAsync())
+                .OrderBy(u => u.Id).ToList();
+            var wydatki = await _uczenService.PobierzWszystkieWydatkiAsync();
+            var przypisania = await _uczenService.PobierzWszystkiePrzypisaniaAsync();
 
             var przypisaniaSlownik = przypisania.ToDictionary(
                 x => (x.UczenId, x.WydatekId));
@@ -344,39 +338,11 @@ namespace Skarbnik.Pages
 
         public async Task OnGetAsync()
         {
-            var uczniowie = await _context.Uczniowie
-                .AsNoTracking()
-                .OrderBy(u => u.Nazwisko)
-                .Select(u => new
-                {
-                    u.Id,
-                    u.Nazwisko
-            
-                })
-                .ToListAsync();
-
-            var wydatki = await _context.Wydatki
-                .AsNoTracking()
-                .OrderByDescending(w => w.CreatedAt)
-                .Select(w => new
-                {
-                    w.Id,
-                    w.Nazwa,
-                    w.Kwota
-                })
-                .ToListAsync();
-
-            var przypisania = await _context.UczenWydatki
-                .AsNoTracking()
-                .Select(uw => new
-                {
-                    id=uw.Id,
-                    uw.UczenId,
-                    uw.WydatekId,
-                    uw.CzyZaplacono,
-                    Kwota = uw.Wydatek.Kwota
-                })                      
-                .ToListAsync();
+            var uczniowie = (await _uczenService.PobierzWszystkichAsync())
+                .OrderBy(u => u.Nazwisko).ToList();
+            var wydatki = (await _uczenService.PobierzWszystkieWydatkiAsync())
+                .OrderByDescending(w => w.CreatedAt).ToList();
+            var przypisania = await _uczenService.PobierzWszystkiePrzypisaniaAsync();
 
             var mapa = przypisania.ToDictionary(
                 x => (x.UczenId, x.WydatekId));
@@ -394,11 +360,11 @@ namespace Skarbnik.Pages
                     Id = wydatek.Id,
                     Nazwa = wydatek.Nazwa,
                     Kwota = wydatek.Kwota,
-                    Suma = przypisane.Sum(p => p.Kwota),
+                    Suma = przypisane.Sum(p => p.Wydatek.Kwota),
 
                     SumaNiezaplacona = przypisane
                         .Where(p => !p.CzyZaplacono)
-                        .Sum(p => p.Kwota)
+                        .Sum(p => p.Wydatek.Kwota)
                 });
             }
 
@@ -417,8 +383,8 @@ namespace Skarbnik.Pages
                     {
                         wiersz.Wydatki.Add(new KomorkaWydatkuVM
                         {
-                            Id = przypisanie.id,
-                            Kwota = przypisanie.Kwota,
+                            Id = przypisanie.Id,
+                            Kwota = przypisanie.Wydatek.Kwota,
                             CzyZaplacono = przypisanie.CzyZaplacono,
                             Nazwa = wydatek.Nazwa,
                             UczenId = uczen.Id,
@@ -430,7 +396,7 @@ namespace Skarbnik.Pages
                         if (!przypisanie.CzyZaplacono)
                         {
                             wiersz.SumaNiezaplacona +=
-                                przypisanie.Kwota;
+                                przypisanie.Wydatek.Kwota;
                         }
                     }
                     else
