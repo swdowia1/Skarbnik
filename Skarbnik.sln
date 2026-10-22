@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.37411.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skarbnik", "Skarbnik\Skarbnik.csproj", "{C570F8EA-80BA-4CF0-A556-4C9531492655}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skarbnik.Tests", "Skarbnik.Tests\Skarbnik.Tests.csproj", "{EB4FD6DA-2247-4D7E-A6A8-776447C7C2D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{C570F8EA-80BA-4CF0-A556-4C9531492655}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C570F8EA-80BA-4CF0-A556-4C9531492655}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C570F8EA-80BA-4CF0-A556-4C9531492655}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB4FD6DA-2247-4D7E-A6A8-776447C7C2D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB4FD6DA-2247-4D7E-A6A8-776447C7C2D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB4FD6DA-2247-4D7E-A6A8-776447C7C2D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB4FD6DA-2247-4D7E-A6A8-776447C7C2D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

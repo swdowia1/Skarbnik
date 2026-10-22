@@ -229,7 +229,6 @@
                         <th>Uczeń</th>
                         <th>Status płatności</th>
                         <th>Data zapłaty</th>
-                        <th>Detale</th>
                         <th class="text-center">Akcja</th>
                     </tr>
                 </thead>
@@ -263,6 +262,13 @@
                                        asp-route-id="@uczen.UczenId"
                                        class="text-decoration-none fw-semibold">
                                         @uczen.Nazwisko
+                                    </a>
+                                    <a asp-page="/Szczegoly"
+                                       asp-route-id="@uczen.UczenWydatekId"
+                                       class="btn btn-sm btn-outline-primary ms-2"
+                                       title="Szczegóły wydatku"
+                                       aria-label="Szczegóły wydatku: @uczen.Nazwisko">
+                                        <i class="bi bi-eye"></i>
                                     </a>
                                 </td>
 
@@ -298,14 +304,6 @@
 
                                 <td class="text-muted text-nowrap">
                                     @(uczen.DataZaplaty?.ToTimeFull() ?? "—")
-                                </td>
-                                <td>
-                                    <a asp-page="/Szczegoly"
-                                       asp-route-id="@uczen.UczenWydatekId"
-                                       class="btn btn-sm btn-outline-primary"
-                                       title="Szczegóły wydatku">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
                                 </td>
                                 <td class="text-center">
                                     @if (uczen.StanPlatnosc != StanPlatnosc.Brak)

@@ -173,6 +173,8 @@ namespace Skarbnik.Services
                 .Where(uw => !uw.CzyZaplacono)
                 .OrderBy(uw => uw.Uczen.Nazwisko)
                 .ThenBy(uw => uw.Wydatek.Nazwa)
+                .ThenBy(uw => uw.UczenId)
+                .ThenBy(uw => uw.WydatekId)
                 .Select(uw => new PozycjaNiezaplacona
                 {
                     UczenId = uw.UczenId,

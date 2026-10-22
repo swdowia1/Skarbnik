@@ -1,72 +1,69 @@
 $ErrorActionPreference = "Stop"
 
-Write-Host "=== SKARBNIK: PROJECT VERIFICATION ===" -ForegroundColor Cyan
+function Invoke-RequiredCommand {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Name,
+        [Parameter(Mandatory = $true)]
+        [string]$FilePath,
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments
+    )
 
-$root = Split-Path -Parent $PSScriptRoot
+    Write-Host "`n=== $Name ===" -ForegroundColor Cyan
+    & $FilePath @Arguments
+    $exitCode = $LASTEXITCODE
 
-$project = Get-ChildItem -Path $root -Filter "*.csproj" -File -Recurse |
-    Where-Object {
-        $_.FullName -notmatch '[\\/](bin|obj)[\\/]'
-    } |
-    Select-Object -First 1
-
-if (-not $project) {
-    throw "Project file not found."
+    if ($exitCode -ne 0) {
+        throw "$Name failed with exit code $exitCode."
+    }
 }
 
-Write-Host "`nProject: $($project.FullName)" -ForegroundColor Yellow
+$root = Split-Path -Parent $PSScriptRoot
+$solution = Join-Path $root "Skarbnik.sln"
+
+if (-not (Test-Path -LiteralPath $solution -PathType Leaf)) {
+    throw "Solution file not found: $solution"
+}
+
+$testProjects = @(
+    Get-ChildItem -Path $root -Filter "*.csproj" -File -Recurse |
+        Where-Object {
+            if ($_.FullName -match '[\\/](bin|obj)[\\/]') {
+                return $false
+            }
+
+            $projectContent = Get-Content -LiteralPath $_.FullName -Raw
+            return $projectContent -match '<IsTestProject>\s*true\s*</IsTestProject>'
+        } |
+        Sort-Object FullName
+)
+
+if ($testProjects.Count -eq 0) {
+    throw "No test projects found. Mark test projects with <IsTestProject>true</IsTestProject>."
+}
 
 Push-Location $root
-
 try {
-    Write-Host "`n=== RESTORE ===" -ForegroundColor Cyan
+    Invoke-RequiredCommand -Name "RESTORE SOLUTION" -FilePath "dotnet" -Arguments @(
+        "restore", $solution
+    )
 
-    dotnet restore $project.FullName
+    Invoke-RequiredCommand -Name "BUILD SOLUTION" -FilePath "dotnet" -Arguments @(
+        "build", $solution, "--no-restore"
+    )
 
-    if ($LASTEXITCODE -ne 0) {
-        throw "Restore failed."
+    foreach ($testProject in $testProjects) {
+        Invoke-RequiredCommand -Name "TEST $($testProject.Name)" -FilePath "dotnet" -Arguments @(
+            "test", $testProject.FullName, "--no-build", "--no-restore"
+        )
     }
 
-    Write-Host "`n=== BUILD ===" -ForegroundColor Cyan
+    Invoke-RequiredCommand -Name "GIT DIFF CHECK" -FilePath "git" -Arguments @(
+        "diff", "--check"
+    )
 
-    dotnet build $project.FullName --no-restore
-
-    if ($LASTEXITCODE -ne 0) {
-        throw "Build failed."
-    }
-
-    Write-Host "`n=== TESTS ===" -ForegroundColor Cyan
-
-    $testProjects = Get-ChildItem -Path $root -Filter "*.csproj" -File -Recurse |
-        Where-Object {
-            $_.Name -match 'Tests?\.csproj$' -and
-            $_.FullName -notmatch '[\\/](bin|obj)[\\/]'
-        }
-
-    if (-not $testProjects) {
-        Write-Host "No test projects found."
-    }
-    else {
-        foreach ($testProject in $testProjects) {
-            Write-Host "Testing: $($testProject.Name)"
-
-            dotnet test $testProject.FullName --no-restore
-
-            if ($LASTEXITCODE -ne 0) {
-                throw "Tests failed: $($testProject.Name)"
-            }
-        }
-    }
-
-    Write-Host "`n=== GIT DIFF CHECK ===" -ForegroundColor Cyan
-
-    git diff --check
-
-    if ($LASTEXITCODE -ne 0) {
-        throw "Git diff check failed."
-    }
-
-    Write-Host "`nVerification completed." -ForegroundColor Green
+    Write-Host "`nVerification completed successfully." -ForegroundColor Green
 }
 finally {
     Pop-Location
