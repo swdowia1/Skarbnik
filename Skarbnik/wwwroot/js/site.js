@@ -57,7 +57,7 @@ $(document).on("click", "#confirmModalOkBtn", function () {
 // Loader
 // =====================================
 
-window.czekaj = function (title) {
+window.showWaitingPanel = function (message = "Proszę czekać...") {
     const loadText = document.getElementById("loadtextid");
     const loading = document.getElementById("loading");
 
@@ -65,20 +65,25 @@ window.czekaj = function (title) {
         return;
     }
 
-    if (title && title.trim() !== "") {
-        loadText.textContent = title;
-    }
-
+    loadText.textContent = typeof message === "string" && message.trim() !== ""
+        ? message
+        : "Proszę czekać...";
+    loading.setAttribute("aria-hidden", "false");
     loading.style.display = "flex";
 };
 
-window.hideLoader = function () {
+window.hideWaitingPanel = function () {
     const loading = document.getElementById("loading");
 
     if (loading) {
         loading.style.display = "none";
+        loading.setAttribute("aria-hidden", "true");
     }
 };
+
+// Zachowanie zgodności z dotychczasowymi wywołaniami.
+window.czekaj = window.showWaitingPanel;
+window.hideLoader = window.hideWaitingPanel;
 
 // =====================================
 // AJAX

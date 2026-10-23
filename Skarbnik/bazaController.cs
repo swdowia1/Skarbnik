@@ -78,6 +78,7 @@ namespace Skarbnik
         [HttpPost("wydatek/{wydatekId:int}/uczen/{uczenId:int}/zmianastatus")]
         public async Task<IActionResult> ZmienStatus(int wydatekId, int uczenId)
         {
+            //Thread.Sleep(6_000); // Dodanie opóźnienia 1 sekundy
             if (await _uczenService.PobierzWydatekAsync(wydatekId) == null)
             {
                 return NotFound(new { message = "Nie znaleziono wydatku." });

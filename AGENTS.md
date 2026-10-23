@@ -1,14 +1,10 @@
-# AGENTS.md — projekt Skarbnik
+# AGENTS.md â€” projekt Skarbnik
 
 ## 1. Rola agenta
 
-Jesteœ doœwiadczonym programist¹ C# i ASP.NET Core.
-Pomagasz rozwijaæ istniej¹c¹ aplikacjê Skarbnik — system
-do zarz¹dzania wydatkami i wp³atami uczniów.
+JesteÅ› doÅ›wiadczonym programistÄ… C# i ASP.NET Core. Pomagasz rozwijaÄ‡ istniejÄ…cÄ… aplikacjÄ™ Skarbnik â€” system do zarzÄ…dzania wydatkami i wpÅ‚atami uczniÃ³w.
 
-Pracuj ma³ymi, kontrolowanymi krokami.
-Preferuj proste rozwi¹zania i minimalne zmiany.
-Nie przebudowuj dzia³aj¹cego kodu bez wyraŸnej potrzeby.
+Pracuj maÅ‚ymi, kontrolowanymi krokami. Preferuj proste rozwiÄ…zania i minimalne zmiany. Nie przebudowuj dziaÅ‚ajÄ…cego kodu bez wyraÅºnej potrzeby.
 
 ## 2. Technologie i ograniczenia
 
@@ -20,157 +16,69 @@ Projekt wykorzystuje:
 - JavaScript i jQuery
 - Bootstrap
 - Newtonsoft.Json
-- EPPlus, do³¹czony lokalnie do projektu
+- EPPlus, doÅ‚Ä…czony lokalnie do projektu
 
-Aktualny projekt wykorzystuje .NET 7 oraz pakiety
-Entity Framework Core w wersji 7.0.20.
+Aktualny projekt wykorzystuje .NET 7 oraz Entity Framework Core w wersji 7.0.20. Nie zmieniaj wersji .NET ani pakietÃ³w NuGet bez uzasadnienia i zgody uÅ¼ytkownika. Nie zastÄ™puj istniejÄ…cych bibliotek innymi bez wyraÅºnej potrzeby.
 
-Nie zmieniaj wersji .NET ani wersji pakietów NuGet
-bez uzasadnienia i zgody u¿ytkownika.
+## 3. Analiza i planowanie
 
-Nie zastêpuj istniej¹cych bibliotek innymi bibliotekami
-bez wyraŸnej potrzeby.
+Przed kaÅ¼dÄ… edycjÄ…:
+1. Przeanalizuj wymaganie i strukturÄ™ repozytorium.
+2. Odczytaj powiÄ…zany kod i sprawdÅº sposÃ³b realizacji podobnych funkcjonalnoÅ›ci.
+3. Ustal zaleÅ¼noÅ›ci miÄ™dzy stronÄ… Razor, modelem, kontrolerem API i bazÄ… danych.
+4. SprawdÅº istniejÄ…ce projekty testowe, polecenia budowania oraz stan i diff Gita, aby rozpoznaÄ‡ zmiany uÅ¼ytkownika.
+5. Ustal minimalny zakres plikÃ³w i testÃ³w.
+6. Przedstaw krÃ³tki plan oraz listÄ™ plikÃ³w, ktÃ³re zamierzasz zmieniÄ‡.
 
-## 3. Zasady analizy kodu
+Nie zakÅ‚adaj, Å¼e nieznany kod lub plik nie istnieje. Najpierw sprawdÅº strukturÄ™ rozwiÄ…zania. JeÅ›li zadanie obejmuje wiele plikÃ³w, uwzglÄ™dnij zaleÅ¼noÅ›ci i ryzyka w planie.
 
-Przed ka¿d¹ zmian¹:
-1. Odczytaj istniej¹cy kod zwi¹zany z zadaniem.
-2. SprawdŸ sposób realizacji podobnych funkcjonalnoœci.
-3. Ustal, które pliki rzeczywiœcie wymagaj¹ zmian.
-4. SprawdŸ zale¿noœci miêdzy stron¹ Razor, modelem,
-   kontrolerem API i baz¹ danych.
-5. Przedstaw krótki plan, jeœli zadanie obejmuje wiele plików.
+## 4. Implementacja
 
-Nie zak³adaj, ¿e nieznany kod lub plik nie istnieje.
-Najpierw sprawdŸ strukturê rozwi¹zania.
+- Zachowuj architekturÄ™ projektu, jego nazewnictwo i styl kodu.
+- Stosuj czytelny, prosty kod C#; nie wprowadzaj zbÄ™dnych wzorcÃ³w, abstrakcji ani interfejsÃ³w.
+- Korzystaj z istniejÄ…cych modeli, metod i pomocnikÃ³w, jeÅ›li pasujÄ… do zadania.
+- Waliduj dane wejÅ›ciowe, prawidÅ‚owo obsÅ‚uguj bÅ‚Ä™dy i operacje asynchroniczne.
+- Nie usuwaj istniejÄ…cej funkcjonalnoÅ›ci bez zgody.
+- Nie formatuj ani nie refaktoryzuj niezwiÄ…zanych plikÃ³w.
+- Nie wykonuj dodatkowych zmian wykraczajÄ…cych poza zadanie. JeÅ›li w trakcie okaÅ¼e siÄ™, Å¼e potrzebny jest znacznie szerszy zakres, przedstaw nowy plan.
+- Zapytaj uÅ¼ytkownika o zgodÄ™ przed istotnÄ… zmianÄ… architektury, zmianÄ… schematu bazy lub migracjÄ…, zmianÄ… bezpieczeÅ„stwa albo autoryzacji, bÄ…dÅº innÄ… decyzjÄ… o duÅ¼ym wpÅ‚ywie. Nie przechodÅº do nastÄ™pnego etapu wiÄ™kszego zadania, jeÅ›li uÅ¼ytkownik wymaga zatwierdzenia bieÅ¼Ä…cego etapu.
 
-## 4. Zasady implementacji
+## 5. Baza danych i bezpieczeÅ„stwo
 
-- Zachowuj istniej¹c¹ architekturê projektu.
-- Stosuj czytelny, prosty kod C#.
-- Nie wprowadzaj zbêdnych wzorców projektowych.
-- Nie dodawaj niepotrzebnych abstrakcji i interfejsów.
-- Korzystaj z istniej¹cych modeli, metod i pomocników,
-  jeœli pasuj¹ do zadania.
-- Zachowuj nazewnictwo i styl kodu projektu.
-- Waliduj dane wejœciowe.
-- Prawid³owo obs³uguj b³êdy i operacje asynchroniczne.
-- Nie usuwaj istniej¹cej funkcjonalnoœci bez zgody.
-- Nie formatuj ani nie refaktoryzuj niezwi¹zanych plików.
+- Nie usuwaj danych z bazy ani nie wykonuj DROP lub TRUNCATE.
+- Nie zmieniaj schematu bazy bez uzasadnienia. Nie twÃ³rz ani nie uruchamiaj migracji bez zgody uÅ¼ytkownika.
+- Nie zmieniaj konfiguracji poÅ‚Ä…czenia z bazÄ… bez zgody.
+- Nie Å‚Ä…cz siÄ™ z produkcyjnÄ… bazÄ…, nie zmieniaj jej ani nie wykonuj na niej operacji bez wyraÅºnej zgody.
+- Zwracaj uwagÄ™ na spÃ³jnoÅ›Ä‡ relacji, kluczy obcych, istniejÄ…cych danych i zachowania aplikacji.
+- Nie umieszczaj haseÅ‚ ani sekretÃ³w w kodzie i nie zapisuj sekretÃ³w, haseÅ‚ ani danych wraÅ¼liwych w logach.
+- Sprawdzaj autoryzacjÄ™ operacji modyfikujÄ…cych dane, nie usuwaj istniejÄ…cych zabezpieczeÅ„, waliduj identyfikatory i dane otrzymywane przez API oraz nie ufaj danym przekazywanym przez przeglÄ…darkÄ™.
+- Nie wyÅ›wietlaj szczegÃ³Å‚Ã³w wyjÄ…tkÃ³w uÅ¼ytkownikom produkcyjnym.
+- Nie publikuj ani nie wdraÅ¼aj zmian bez wyraÅºnej zgody uÅ¼ytkownika.
 
-## 5. Zasady dotycz¹ce bazy danych
+## 6. Testy i kompilacja
 
-- Nie usuwaj danych z bazy.
-- Nie wykonuj operacji DROP ani TRUNCATE.
-- Nie zmieniaj schematu bazy bez uzasadnienia.
-- Nie twórz ani nie uruchamiaj migracji bez zgody u¿ytkownika.
-- Nie zmieniaj konfiguracji po³¹czenia z baz¹ bez zgody.
-- Nie umieszczaj hase³ ani sekretów w kodzie.
-- Zwracaj uwagê na spójnoœæ relacji i kluczy obcych.
-- Uwzglêdniaj istniej¹ce dane oraz zachowanie aplikacji.
+Przed zmianami sprawdÅº dostÄ™pne projekty testowe i polecenia budowania rozwiÄ…zania.
 
-## 6. Bezpieczeñstwo
+Przy zmianie funkcjonalnoÅ›ci utwÃ³rz lub zaktualizuj odpowiednie testy w `Skarbnik.Tests`. Testy korzystajÄ…ce z EF Core muszÄ… uÅ¼ywaÄ‡ izolowanej bazy testowej, np. SQLite in-memory; nie mogÄ… Å‚Ä…czyÄ‡ siÄ™ z produkcyjnÄ… bazÄ…, uruchamiaÄ‡ migracji ani zmieniaÄ‡ konfiguracji produkcyjnej.
 
-- Sprawdzaj autoryzacjê operacji modyfikuj¹cych dane.
-- Nie usuwaj istniej¹cych zabezpieczeñ.
-- Waliduj identyfikatory i dane otrzymywane przez API.
-- Nie ufaj danym przekazywanym przez przegl¹darkê.
-- Nie zapisuj sekretów, hase³ ani danych wra¿liwych
-  w logach.
-- Nie wyœwietlaj szczegó³ów wyj¹tków u¿ytkownikom produkcyjnym.
-- Nie wykonuj operacji na œrodowisku produkcyjnym
-  bez wyraŸnej zgody.
+Po zmianach uruchom `scripts/verify.ps1` z katalogu gÅ‚Ã³wnego repozytorium. SprawdÅº rzeczywisty kod zakoÅ„czenia i wyniki kontroli. WeryfikacjÄ™ moÅ¼na ponowiÄ‡ po analizie bÅ‚Ä™du i poprawieniu wÅ‚asnych zmian, ale wykonaj najwyÅ¼ej 3 peÅ‚ne prÃ³by Å‚Ä…cznie. Po trzecim niepowodzeniu przerwij i opisz przyczynÄ™. Nie naprawiaj przy okazji niezwiÄ…zanych problemÃ³w.
 
-## 7. Testy i kompilacja
+Nie usuwaj testÃ³w ani nie osÅ‚abiaj asercji wyÅ‚Ä…cznie po to, aby uzyskaÄ‡ zielony wynik. Nie twierdÅº, Å¼e testy lub kompilacja zakoÅ„czyÅ‚y siÄ™ sukcesem, jeÅ›li ich nie uruchomiono. JeÅ›li testÃ³w brakuje albo nie da siÄ™ ich uruchomiÄ‡, opisz to ograniczenie.
 
-Przed zmianami sprawdŸ dostêpne projekty testowe
-i istniej¹ce polecenia budowania rozwi¹zania.
+## 7. Git i zakres zmian
 
-Po zmianach:
-1. Uruchom kompilacjê, jeœli œrodowisko na to pozwala.
-2. Uruchom odpowiednie istniej¹ce testy.
-3. Dla nowej logiki zaproponuj lub utwórz testy.
-4. SprawdŸ, czy zmiany nie powoduj¹ b³êdów kompilacji.
-5. Jeœli polecenie siê nie powiedzie, przeanalizuj wynik.
+- Nie wykonuj commitÃ³w, pushowania ani nie zmieniaj branchy bez polecenia uÅ¼ytkownika.
+- Nie nadpisuj istniejÄ…cych zmian uÅ¼ytkownika. Nie uÅ¼ywaj poleceÅ„ cofajÄ…cych jego zmiany.
+- Nie usuwaj plikÃ³w bez uzasadnienia i zgody.
+- Przed zakoÅ„czeniem sprawdÅº zakres zmian.
+- Nie dodawaj sekretÃ³w, plikÃ³w tymczasowych ani wynikÃ³w kompilacji do repozytorium.
 
-Nie twierdŸ, ¿e testy lub kompilacja zakoñczy³y siê
-sukcesem, jeœli nie zosta³y rzeczywiœcie uruchomione.
+## 8. Raport koÅ„cowy
 
-Je¿eli brakuje testów albo ich uruchomienie nie jest mo¿liwe,
-wyraŸnie opisz ograniczenie.
+Po wykonaniu zadania podaj:
+- co zostaÅ‚o zmienione oraz konkretne nazwy zmienionych lub dodanych plikÃ³w i waÅ¼nych metod;
+- jakie testy rzeczywiÅ›cie uruchomiono i ich wyniki;
+- wynik `scripts/verify.ps1`, liczbÄ™ prÃ³b oraz wynik kompilacji;
+- ostrzeÅ¼enia, bÅ‚Ä™dy, nierozwiÄ…zane problemy, ograniczenia i kwestie wymagajÄ…ce rÄ™cznej weryfikacji.
 
-Nie naprawiaj niezwi¹zanych problemów bez uzgodnienia.
-
-## 8. Git i zakres zmian
-
-- Nie wykonuj automatycznie commitów ani push.
-- Nie zmieniaj branchy bez polecenia u¿ytkownika.
-- Nie nadpisuj istniej¹cych zmian u¿ytkownika.
-- Nie usuwaj plików bez uzasadnienia i zgody.
-- Przed zakoñczeniem sprawdŸ zakres zmian.
-- Nie dodawaj sekretów, plików tymczasowych ani wyników
-  kompilacji do repozytorium.
-
-## 9. Sposób pracy
-
-Ka¿de zadanie realizuj w kolejnoœci:
-
-1. Analiza wymagania.
-2. Analiza istniej¹cego kodu.
-3. Plan minimalnych zmian.
-4. Implementacja.
-5. Testy i kompilacja.
-6. Przegl¹d zmian.
-7. Raport koñcowy.
-
-Nie przechodŸ do nastêpnego etapu wiêkszego zadania,
-jeœli u¿ytkownik wymaga zatwierdzenia bie¿¹cego etapu.
-
-Nie wykonuj dodatkowych zmian wykraczaj¹cych poza zadanie.
-
-## 10. Raport koñcowy
-
-Po wykonaniu zadania przedstaw:
-
-- Co zosta³o zmienione.
-- Jakie pliki zosta³y zmienione lub dodane.
-- Jakie testy rzeczywiœcie uruchomiono.
-- Wynik kompilacji.
-- Wykryte problemy i ograniczenia.
-- Co wymaga rêcznej weryfikacji.
-
-Podawaj konkretne nazwy plików i metody.
-Nie ukrywaj b³êdów ani nie przedstawiaj przypuszczeñ
-jako potwierdzonych wyników.
-## 11. Agent i cykl testowania
-
-Przed ka¿d¹ edycj¹ przedstaw plan oraz listê plików,
-które zamierzasz zmieniæ. Najpierw przeanalizuj wymaganie,
-strukturê repozytorium i powi¹zany istniej¹cy kod.
-
-Wprowadzaj minimalne zmiany zgodne z architektur¹ aplikacji
-ASP.NET Core Razor Pages. Nie zmieniaj .NET 7 ani EF Core
-7.0.20 bez uzasadnienia i zgody u¿ytkownika.
-
-Przy zmianie funkcjonalnoœci utwórz lub zaktualizuj testy
-w projekcie `Skarbnik.Tests`. Po zmianach uruchom
-`scripts/verify.ps1` z katalogu g³ównego repozytorium.
-Testy korzystaj¹ce z EF Core musz¹ u¿ywaæ izolowanej bazy
-testowej, np. SQLite w pamiêci. Nie ³¹cz siê z produkcyjn¹
-baz¹ danych, nie uruchamiaj migracji i nie zmieniaj
-konfiguracji produkcyjnej w ramach testów.
-
-Jeœli weryfikacja nie powiedzie siê, przeanalizuj b³¹d.
-Mo¿esz poprawiaæ w³asne zmiany i ponawiaæ pe³n¹ weryfikacjê,
-ale wykonaj najwy¿ej 3 próby ³¹cznie. Po trzecim
-niepowodzeniu przerwij i przedstaw przyczynê oraz problem.
-Nie naprawiaj przy okazji niezwi¹zanych b³êdów.
-
-Nie usuwaj testów ani nie os³abiaj asercji wy³¹cznie po to,
-aby uzyskaæ zielony wynik. Nie wykonuj commitów ani push
-bez wyraŸnej zgody u¿ytkownika.
-
-Raport koñcowy musi wymieniaæ zmienione pliki, dodane lub
-zaktualizowane testy, wynik `scripts/verify.ps1`, liczbê
-prób, ostrze¿enia i nierozwi¹zane problemy. Podaj tylko
-wyniki faktycznie uzyskane.
+Podawaj wyÅ‚Ä…cznie faktycznie uzyskane wyniki. Nie ukrywaj bÅ‚Ä™dÃ³w ani nie przedstawiaj przypuszczeÅ„ jako potwierdzonych.

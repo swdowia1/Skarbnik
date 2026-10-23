@@ -161,3 +161,53 @@ body.user-zalogowany {
         transform: translateY(0);
         box-shadow: none;
     }
+
+/* Globalny panel oczekiwania */
+.waiting-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: rgba(15, 23, 42, 0.42);
+    backdrop-filter: blur(3px);
+}
+
+.waiting-panel-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: min(100%, 420px);
+    padding: 1.25rem 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.22);
+}
+
+.waiting-panel-spinner {
+    flex: 0 0 2rem;
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid #dbeafe;
+    border-top-color: #198754;
+    border-radius: 50%;
+    animation: waiting-panel-spin 0.8s linear infinite;
+}
+
+.waiting-panel-text {
+    color: #1e293b;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+@keyframes waiting-panel-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .waiting-panel-spinner { animation-duration: 1.8s; }
+}
