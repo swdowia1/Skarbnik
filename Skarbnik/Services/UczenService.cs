@@ -91,6 +91,51 @@ namespace Skarbnik.Services
             return true;
         }
 
+        public async Task<int?> PrzypiszWszystkichUczniowAsync(int wydatekId)
+        {
+            if (!await _context.Wydatki.AnyAsync(wydatek => wydatek.Id == wydatekId))
+                return null;
+
+            var przypisaniUczniowieIds = await _context.UczenWydatki
+                .Where(przypisanie => przypisanie.WydatekId == wydatekId)
+                .Select(przypisanie => przypisanie.UczenId)
+                .ToListAsync();
+            var przypisaniUczniowie = przypisaniUczniowieIds.ToHashSet();
+            var nowePrzypisania = await _context.Uczniowie
+                .Where(uczen => !przypisaniUczniowie.Contains(uczen.Id))
+                .Select(uczen => new UczenWydatek
+                {
+                    WydatekId = wydatekId,
+                    UczenId = uczen.Id,
+                    CzyZaplacono = false
+                })
+                .ToListAsync();
+
+            if (nowePrzypisania.Count > 0)
+            {
+                _context.UczenWydatki.AddRange(nowePrzypisania);
+                await _context.SaveChangesAsync();
+            }
+
+            return nowePrzypisania.Count;
+        }
+
+        public async Task<bool> UsunWydatekAsync(int wydatekId)
+        {
+            var wydatek = await _context.Wydatki
+                .FirstOrDefaultAsync(w => w.Id == wydatekId);
+            if (wydatek == null)
+                return false;
+
+            var przypisania = await _context.UczenWydatki
+                .Where(przypisanie => przypisanie.WydatekId == wydatekId)
+                .ToListAsync();
+            _context.UczenWydatki.RemoveRange(przypisania);
+            _context.Wydatki.Remove(wydatek);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> UstawCzyZaplaconoAsync(
             int uczenId,
             int wydatekId,
@@ -250,6 +295,15 @@ namespace Skarbnik.Services
             if (tylkoDoOdczytu)
                 query = query.AsNoTracking();
             return query.FirstOrDefaultAsync(uw => uw.Id == id);
+        }
+
+        public Task<UczenWydatek?> PobierzPrzypisanieDlaUczniaIWydatkuAsync(
+            int uczenId,
+            int wydatekId)
+        {
+            return _context.UczenWydatki
+                .AsNoTracking()
+                .FirstOrDefaultAsync(uw => uw.UczenId == uczenId && uw.WydatekId == wydatekId);
         }
 
         public async Task<bool> UsunPrzypisanieAsync(int id)

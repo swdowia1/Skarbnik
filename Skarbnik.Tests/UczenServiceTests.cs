@@ -101,6 +101,45 @@ public sealed class UczenServiceTests : IAsyncLifetime
         var przypisanie = await _context.UczenWydatki.SingleAsync();
         Assert.True(przypisanie.CzyZaplacono);
         Assert.NotNull(przypisanie.DataZaplaty);
+        Assert.Equal(DateTimeKind.Utc, przypisanie.DataZaplaty!.Value.Kind);
+    }
+
+    [Fact]
+    public async Task PrzypiszWszystkichUczniowAsync_PrzypisujeTylkoBrakujacych()
+    {
+        var pierwszyUczen = await DodajUczniaAsync();
+        var drugiUczen = await DodajUczniaAsync();
+        var wydatek = await DodajWydatekAsync();
+        Assert.True(await _service.PrzypiszWydatekAsync(pierwszyUczen.Id, wydatek.Id, czyZaplacono: true));
+
+        var liczbaDodanych = await _service.PrzypiszWszystkichUczniowAsync(wydatek.Id);
+        var przypisania = await _context.UczenWydatki.OrderBy(x => x.UczenId).ToListAsync();
+
+        Assert.Equal(1, liczbaDodanych);
+        Assert.Equal(new[] { pierwszyUczen.Id, drugiUczen.Id }, przypisania.Select(x => x.UczenId));
+        Assert.True(przypisania[0].CzyZaplacono);
+        Assert.False(przypisania[1].CzyZaplacono);
+    }
+
+    [Fact]
+    public async Task PrzypiszWszystkichUczniowAsync_ZwracaNullDlaNieistniejacegoWydatku()
+    {
+        var wynik = await _service.PrzypiszWszystkichUczniowAsync(999);
+
+        Assert.Null(wynik);
+    }
+
+    [Fact]
+    public async Task UsunWydatekAsync_UsuwaWydatekOrazPrzypisania()
+    {
+        var (uczen, wydatek) = await DodajUczniaIWydatekAsync();
+        Assert.True(await _service.PrzypiszWydatekAsync(uczen.Id, wydatek.Id));
+
+        var wynik = await _service.UsunWydatekAsync(wydatek.Id);
+
+        Assert.True(wynik);
+        Assert.Empty(await _context.Wydatki.ToListAsync());
+        Assert.Empty(await _context.UczenWydatki.ToListAsync());
     }
 
     [Fact]
