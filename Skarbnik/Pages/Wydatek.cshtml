@@ -634,7 +634,7 @@
     // ZMIANA STATUSU PŁATNOŚCI
     function zmianastatus(uczenId) {
 
-    czekaj("Trwa zapisywanie danych...");
+    
         postjson(
             `/api/baza/wydatek/${wydatekId}/uczen/${uczenId}/zmianastatus`,
             {},

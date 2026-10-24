@@ -90,6 +90,7 @@ window.hideLoader = window.hideWaitingPanel;
 // =====================================
 
 postjson = function (n, t, i, r, u) {
+    czekaj("Trwa zapisywanie danych...");
     return $.ajax({
         url: n,
         type: "POST",
