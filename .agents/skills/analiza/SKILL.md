@@ -15,8 +15,8 @@ Zawsze stosuj główny `AGENTS.md`; w razie rozbieżności nadrzędne są jego z
 4. Prześledź przepływ danych i zależności. W raporcie odróżnij potwierdzone fakty od hipotez.
 5. Wskaż konkretny plan i listę plików, które mogłyby wymagać zmiany.
 
-To zadanie jest tylko do odczytu. Nie edytuj ani nie twórz plików, nie uruchamiaj aplikacji, migracji ani operacji na bazie. Nie odczytuj ani nie ujawniaj produkcyjnych connection stringów lub sekretów.
+Analiza jest wyłącznie do odczytu. Nie edytuj ani nie twórz plików, nie uruchamiaj aplikacji, testów, kompilacji ani `scripts/verify.ps1`, chyba że użytkownik wyraźnie o to poprosi. Nie uruchamiaj migracji ani operacji na bazie. Nie odczytuj ani nie ujawniaj produkcyjnych connection stringów lub sekretów.
 
-Nie łącz się z produkcyjną bazą i nie zmieniaj jej konfiguracji. Jeśli w ramach zadania uruchamiasz weryfikację, ogranicz ją do najwyżej 3 pełnych prób łącznie; po trzecim niepowodzeniu przerwij i opisz problem. Nie wykonuj commitów ani push bez wyraźnej zgody użytkownika.
+Nie łącz się z produkcyjną bazą i nie zmieniaj jej konfiguracji. Jeśli użytkownik wyraźnie poprosi o weryfikację, ogranicz ją do najwyżej 3 pełnych prób łącznie; po trzecim niepowodzeniu przerwij i opisz problem. Nie wykonuj commitów ani push bez wyraźnej zgody użytkownika.
 
 Raportuj ustalenia, konkretne pliki i metody, ryzyka oraz ograniczenia analizy.

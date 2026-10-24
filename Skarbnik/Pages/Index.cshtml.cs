@@ -5,6 +5,9 @@ using Skarbnik.Services;
 using Skarbnik.VM;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using Skarbnik.Extensions;
+using System.Globalization;
+using System.Text;
 
 namespace Skarbnik.Pages
 {
@@ -332,6 +335,96 @@ namespace Skarbnik.Pages
                 plik,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 $"Skarbnik_Wydatki_{DateTime.Now:yyyyMMdd}.xlsx");
+        }
+
+        public async Task<IActionResult> OnGetCsvAsync()
+        {
+            var uczniowie = (await _uczenService.PobierzWszystkichAsync())
+                .OrderBy(uczen => uczen.Nazwisko)
+                .ToList();
+            var wydatki = (await _uczenService.PobierzWszystkieWydatkiAsync())
+                .OrderByDescending(wydatek => wydatek.CreatedAt)
+                .ToList();
+            var przypisania = await _uczenService.PobierzWszystkiePrzypisaniaAsync();
+            var przypisaniaSlownik = przypisania.ToDictionary(
+                przypisanie => (przypisanie.UczenId, przypisanie.WydatekId));
+
+            var csv = new StringBuilder();
+            DodajWierszCsv(csv,
+                ("Uczeń", false),
+                ("Wydatek", false),
+                ("Kwota (zł)", false),
+                ("Status płatności", false),
+                ("Data zapłaty", false));
+
+            var kulturaPolska = CultureInfo.GetCultureInfo("pl-PL");
+            foreach (var uczen in uczniowie)
+            {
+                foreach (var wydatek in wydatki)
+                {
+                    przypisaniaSlownik.TryGetValue(
+                        (uczen.Id, wydatek.Id), out var przypisanie);
+
+                    var status = przypisanie == null
+                        ? "Brak"
+                        : przypisanie.CzyZaplacono
+                            ? "Zapłacono"
+                            : "Niezapłacono";
+                    var kwota = przypisanie == null
+                        ? string.Empty
+                        : wydatek.Kwota.ToString("0.00", kulturaPolska);
+                    var dataZaplaty = przypisanie?.CzyZaplacono == true &&
+                                      przypisanie.DataZaplaty.HasValue
+                        ? przypisanie.DataZaplaty.Value
+                            .ToWarsawTime()
+                            .ToString("dd.MM.yyyy", kulturaPolska)
+                        : string.Empty;
+
+                    DodajWierszCsv(csv,
+                        (uczen.Nazwisko, true),
+                        (wydatek.Nazwa, true),
+                        (kwota, false),
+                        (status, false),
+                        (dataZaplaty, false));
+                }
+            }
+
+            var zawartosc = Encoding.UTF8.GetBytes(csv.ToString());
+            var preambula = Encoding.UTF8.GetPreamble();
+            var plik = new byte[preambula.Length + zawartosc.Length];
+            Buffer.BlockCopy(preambula, 0, plik, 0, preambula.Length);
+            Buffer.BlockCopy(zawartosc, 0, plik, preambula.Length, zawartosc.Length);
+
+            return File(
+                plik,
+                "text/csv; charset=utf-8",
+                $"Skarbnik_Wydatki_{DateTime.Now:yyyyMMdd}.csv");
+        }
+
+        private static void DodajWierszCsv(
+            StringBuilder csv,
+            params (string? Wartosc, bool ZabezpieczFormule)[] pola)
+        {
+            for (var i = 0; i < pola.Length; i++)
+            {
+                if (i > 0)
+                    csv.Append(';');
+
+                var wartosc = pola[i].Wartosc ?? string.Empty;
+                var wartoscBezBialychZnakow = wartosc.TrimStart();
+                if (pola[i].ZabezpieczFormule &&
+                    wartoscBezBialychZnakow.Length > 0 &&
+                    "=+-@".Contains(wartoscBezBialychZnakow[0]))
+                {
+                    wartosc = "'" + wartosc;
+                }
+
+                csv.Append('"');
+                csv.Append(wartosc.Replace("\"", "\"\""));
+                csv.Append('"');
+            }
+
+            csv.Append("\r\n");
         }
        
         public SummaryViewModel Podsumowanie { get; set; } = new();

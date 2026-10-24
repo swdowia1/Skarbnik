@@ -77,6 +77,35 @@ public sealed class UczenServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task DodajWydatekDlaWszystkichAsync_TworzyWydatekINieoplaconePrzypisaniaDlaWszystkichUczniow()
+    {
+        var pierwszyUczen = await DodajUczniaAsync();
+        var drugiUczen = await DodajUczniaAsync();
+
+        var wynik = await _service.DodajWydatekDlaWszystkichAsync("Wycieczka", 42.50m);
+
+        var zapisanyWydatek = await _context.Wydatki.SingleAsync();
+        var przypisania = await _context.UczenWydatki
+            .OrderBy(przypisanie => przypisanie.UczenId)
+            .ToListAsync();
+
+        Assert.Equal("Wycieczka", zapisanyWydatek.Nazwa);
+        Assert.Equal(42.50m, zapisanyWydatek.Kwota);
+        Assert.Equal(zapisanyWydatek.Id, wynik.Id);
+
+        Assert.Equal(2, przypisania.Count);
+        Assert.Equal(
+            new[] { pierwszyUczen.Id, drugiUczen.Id },
+            przypisania.Select(przypisanie => przypisanie.UczenId));
+        Assert.All(przypisania, przypisanie =>
+        {
+            Assert.Equal(zapisanyWydatek.Id, przypisanie.WydatekId);
+            Assert.False(przypisanie.CzyZaplacono);
+            Assert.Null(przypisanie.DataZaplaty);
+        });
+    }
+
+    [Fact]
     public async Task PrzypiszWydatekAsync_DodajeNieoplaconePrzypisanie()
     {
         var (uczen, wydatek) = await DodajUczniaIWydatekAsync();

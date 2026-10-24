@@ -112,6 +112,8 @@ Zastosuj czytelne nagłówki, tabele lub karty, wyróżnienie poziomów ważnoś
 
 Przy każdym uruchomieniu utwórz aktualny raport pod wskazaną ścieżką, zastępując poprzedni raport. Nie nadpisuj żadnych innych plików.
 
+Przed zapisaniem raportu ponownie sprawdź stan Git oraz istniejące zmiany w `reports/code-review.html`. Nie nadpisuj niezapisanych zmian użytkownika. Jeśli raport zawiera takie zmiany, poproś użytkownika o decyzję albo zapisz nowy raport pod inną nazwą.
+
 ## Zakończenie
 
 Po utworzeniu raportu:

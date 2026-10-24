@@ -20,6 +20,15 @@ Projekt wykorzystuje:
 
 Aktualny projekt wykorzystuje .NET 7 oraz Entity Framework Core w wersji 7.0.20. Nie zmieniaj wersji .NET ani pakietów NuGet bez uzasadnienia i zgody użytkownika. Nie zastępuj istniejących bibliotek innymi bez wyraźnej potrzeby.
 
+## Wybór skilla
+
+- Analiza bez zmian → `analiza`.
+- Nowa funkcjonalność → `funkcja`.
+- Naprawa istniejącego błędu → `naprawa`.
+- Dodawanie lub ocena testów → `testy`.
+- Przegląd zmian Git bez edycji → `code-review`.
+- Szeroki audyt projektu z raportem HTML → `review`.
+
 ## 3. Analiza i planowanie
 
 Przed każdą edycją:
