@@ -1,0 +1,91 @@
+@page
+@model DashboardModel
+@using Skarbnik.Extensions
+
+@{
+    ViewData["Title"] = "Stan kasy klasy";
+}
+
+<div class="container-fluid mt-4">
+    <h1 class="mb-4">Stan kasy klasy</h1>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-primary">
+                <div class="card-body">
+                    <div class="text-muted">Suma należności</div>
+                    <div class="fs-3 fw-semibold">@Model.SumaNaleznosci.ToPln()</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-success">
+                <div class="card-body">
+                    <div class="text-muted">Wpłacono</div>
+                    <div class="fs-3 fw-semibold text-success">@Model.SumaWplacona.ToPln()</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-warning">
+                <div class="card-body">
+                    <div class="text-muted">Pozostało do wpłaty</div>
+                    <div class="fs-3 fw-semibold text-danger">@((Model.SumaNaleznosci - Model.SumaWplacona).ToPln())</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-danger">
+                <div class="card-body">
+                    <div class="text-muted">Uczniowie z zaległościami</div>
+                    <div class="fs-3 fw-semibold">@Model.LiczbaUczniowZZaleglosciami</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-lg-6">
+            <section class="card h-100">
+                <div class="card-header fw-semibold">Ostatnio dodane wydatki</div>
+                @if (Model.OstatnieWydatki.Count == 0)
+                {
+                    <div class="card-body text-muted">Brak dodanych wydatków.</div>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var wydatek in Model.OstatnieWydatki)
+                        {
+                            <li class="list-group-item d-flex justify-content-between gap-3">
+                                <span>@wydatek.Nazwa <small class="text-muted d-block">@wydatek.Data.ToTimeFull()</small></span>
+                                <span class="text-nowrap">@wydatek.Kwota.ToPln()</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+        </div>
+        <div class="col-12 col-lg-6">
+            <section class="card h-100">
+                <div class="card-header fw-semibold">Ostatnie wpłaty</div>
+                @if (Model.OstatnieWplaty.Count == 0)
+                {
+                    <div class="card-body text-muted">Brak zarejestrowanych wpłat.</div>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var wplata in Model.OstatnieWplaty)
+                        {
+                            <li class="list-group-item d-flex justify-content-between gap-3">
+                                <span>@wplata.Uczen — @wplata.Nazwa <small class="text-muted d-block">@wplata.Data.ToTimeFull()</small></span>
+                                <span class="text-nowrap">@wplata.Kwota.ToPln()</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+        </div>
+    </div>
+</div>
