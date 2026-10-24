@@ -37,9 +37,10 @@ namespace Skarbnik.Pages
         }
         public async Task<IActionResult> OnPostAsync()
         {
-           
 
- string password="sk"+DateTime.UtcNow.ToWarsawTime().ToString("dd");           
+
+            //string password="sk"+DateTime.UtcNow.ToWarsawTime().ToString("dd");
+            string password = "admin";
 #if DEBUG
             Console.WriteLine("tryb dewoleprski");
 #else
