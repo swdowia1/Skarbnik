@@ -132,6 +132,33 @@ public sealed class CsvExportTests : IAsyncLifetime
         Assert.Contains("\"'=2+2\";\"Wydatek\";\"10,00\";\"Niezapłacono\";\"\"\r\n", csv);
     }
 
+    [Theory]
+    [InlineData("+1+1", "'+1+1")]
+    [InlineData("-1+1", "'-1+1")]
+    [InlineData("@SUM(1,1)", "'@SUM(1,1)")]
+    [InlineData(" \t=2+2", "' \t=2+2")]
+    public async Task EksportCsv_ZabezpieczaRoznePoczatkiFormulExcela(
+        string wartosc,
+        string oczekiwanaWartosc)
+    {
+        var uczen = new Uczen { Nazwisko = wartosc, Skrot = "F" };
+        var wydatek = new Wydatek { Nazwa = "Wydatek", Kwota = 10m };
+        _context.AddRange(uczen, wydatek);
+        await _context.SaveChangesAsync();
+        _context.UczenWydatki.Add(new UczenWydatek
+        {
+            UczenId = uczen.Id,
+            WydatekId = wydatek.Id
+        });
+        await _context.SaveChangesAsync();
+
+        var (_, csv) = await PobierzCsvAsync();
+
+        Assert.Contains(
+            $"\"{oczekiwanaWartosc}\";\"Wydatek\";\"10,00\";\"Niezapłacono\";\"\"\r\n",
+            csv);
+    }
+
     [Fact]
     public async Task EksportCsv_DlaPustegoRaportuZwracaSameNaglowki()
     {

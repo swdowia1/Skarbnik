@@ -83,4 +83,42 @@ public sealed class IndexDashboardTests : IAsyncLifetime
         Assert.Equal("Starszy wydatek", wplata.Nazwa);
         Assert.Equal(20m, wplata.Kwota);
     }
+
+    [Fact]
+    public async Task OnGetAsync_FiltrujeWydatkiPoFragmencieNazwyBezWzgledunaWielkoscLiter()
+    {
+        var uczen = new Uczen { Nazwisko = "Kowalski", Skrot = "K" };
+        var wycieczka = new Wydatek { Nazwa = "Wycieczka szkolna", Kwota = 30m };
+        var skladka = new Wydatek { Nazwa = "Składka klasowa", Kwota = 12m };
+        _context.AddRange(uczen, wycieczka, skladka);
+        await _context.SaveChangesAsync();
+        _context.UczenWydatki.AddRange(
+            new UczenWydatek
+            {
+                UczenId = uczen.Id,
+                WydatekId = wycieczka.Id,
+                CzyZaplacono = false
+            },
+            new UczenWydatek
+            {
+                UczenId = uczen.Id,
+                WydatekId = skladka.Id,
+                CzyZaplacono = false
+            });
+        await _context.SaveChangesAsync();
+
+        var model = new IndexModel(new UczenService(_context))
+        {
+            FiltrNazwyWydatku = "  WYCIECZKA  "
+        };
+        await model.OnGetAsync();
+
+        var wydatek = Assert.Single(model.Podsumowanie.Wydatki);
+        Assert.Equal("Wycieczka szkolna", wydatek.Nazwa);
+        Assert.Equal(30m, wydatek.Suma);
+        Assert.Equal(30m, wydatek.SumaNiezaplacona);
+        var podsumowanieUcznia = Assert.Single(model.Podsumowanie.Uczniowie);
+        Assert.Equal(30m, podsumowanieUcznia.SumaNiezaplacona);
+        Assert.Single(podsumowanieUcznia.Wydatki);
+    }
 }

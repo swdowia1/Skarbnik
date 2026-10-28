@@ -18,6 +18,19 @@
         Pobierz raport CSV
     </a>
 
+    <form method="get" class="row g-2 align-items-end my-3">
+        <div class="col-auto">
+            <label asp-for="FiltrNazwyWydatku" class="form-label">Filtruj wydatki po nazwie</label>
+            <input asp-for="FiltrNazwyWydatku"
+                   class="form-control"
+                   placeholder="Wpisz nazwę lub jej fragment" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Filtruj</button>
+            <a asp-page="/Index" class="btn btn-outline-secondary">Wyczyść</a>
+        </div>
+    </form>
+
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle">
             <thead class="table-light">

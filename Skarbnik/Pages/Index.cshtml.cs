@@ -427,6 +427,9 @@ namespace Skarbnik.Pages
             csv.Append("\r\n");
         }
        
+        [BindProperty(SupportsGet = true)]
+        public string? FiltrNazwyWydatku { get; set; }
+
         public SummaryViewModel Podsumowanie { get; set; } = new();
 
         public async Task OnGetAsync()
@@ -435,6 +438,16 @@ namespace Skarbnik.Pages
                 .OrderBy(u => u.Nazwisko).ToList();
             var wydatki = (await _uczenService.PobierzWszystkieWydatkiAsync())
                 .OrderByDescending(w => w.CreatedAt).ToList();
+            var filtrNazwy = FiltrNazwyWydatku?.Trim();
+            if (!string.IsNullOrEmpty(filtrNazwy))
+            {
+                wydatki = wydatki
+                    .Where(wydatek => wydatek.Nazwa.Contains(
+                        filtrNazwy,
+                        StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
             var przypisania = await _uczenService.PobierzWszystkiePrzypisaniaAsync();
 
             var mapa = przypisania.ToDictionary(
