@@ -1,0 +1,50 @@
+@page
+@model Skarbnik.Pages.DoplatyModel
+@using Skarbnik.Extensions
+
+@{
+    ViewData["Title"] = "Dopłaty uczniów";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Ile każdy uczeń musi dopłacić</h1>
+
+    @if (Model.Uczniowie.Count == 0)
+    {
+        <div class="alert alert-info">Brak uczniów do wyświetlenia.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Uczeń</th>
+                        <th class="text-end">Do dopłaty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var uczen in Model.Uczniowie)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-page="/UczenWydatki" asp-route-id="@uczen.UczenId" class="text-decoration-none">
+                                    @uczen.Nazwisko
+                                </a>
+                            </td>
+                            <td class="text-end @(uczen.KwotaDoDoplaty > 0 ? "text-danger fw-bold" : "text-success")">
+                                @uczen.KwotaDoDoplaty.ToPln()
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="table-warning fw-bold">
+                        <td>Razem do dopłaty</td>
+                        <td class="text-end">@Model.SumaDoplat.ToPln()</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    }
+</div>
